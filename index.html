@@ -4,62 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Voice Calculator</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            padding: 20px;
-            background-color: #f4f4f9;
-            color: #333;
-        }
-        .calculator {
-            max-width: 400px;
-            margin: 0 auto;
-            background: #fff;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-        }
-        .result {
-            font-size: 24px;
-            margin-bottom: 10px;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            background: #f9f9f9;
-        }
-        .buttons {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 10px;
-        }
-        button {
-            font-size: 20px;
-            padding: 15px;
-            border: none;
-            border-radius: 5px;
-            background-color: #6c757d;
-            color: white;
-            cursor: pointer;
-            transition: background 0.3s;
-        }
-        button:hover {
-            background-color: #5a6268;
-        }
-        .controls {
-            margin-top: 10px;
-            display: flex;
-            gap: 10px;
-            justify-content: center;
-        }
-        .speak-button {
-            font-size: 18px;
-        }
-        .ad-container {
-            margin: 20px 0;
-            text-align: center;
-        }
-    </style>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="calculator">
@@ -79,115 +24,23 @@
             <button onclick="append('3')">3</button>
             <button onclick="append('-')">-</button>
             <button onclick="append('0')">0</button>
-            <button onclick="append('.')">.</button>
+            <button onclick="appendDecimal()">.</button>
             <button onclick="calculate()">=</button>
             <button onclick="append('+')">+</button>
             <button onclick="append('(')">(</button>
             <button onclick="append(')')">)</button>
             <button onclick="append('%')">%</button>
             <button onclick="append('Math.sqrt(')">√</button>
-            <button onclick="append('^')">^</button>
+            <button onclick="append('^')">Power</button>
             <button onclick="append('Math.PI')">π</button>
             <button onclick="append('Math.E')">e</button>
             <button onclick="backspace()">⌫</button>
         </div>
         <div class="controls">
-            <button onclick="clearInput()" style="background-color: #dc3545;">Clear</button>
-            <button class="speak-button" onclick="startVoiceInput()">🎤 Speak</button>
+            <button onclick="clearInput()">Clear</button>
+            <button onclick="startVoiceInput()">🎤 Speak</button>
         </div>
     </div>
-
-    <div class="ad-container">
-        <!-- Google AdSense placeholder -->
-        <p>Advertisement</p>
-        <ins class="adsbygoogle"
-             style="display:block"
-             data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
-             data-ad-slot="1234567890"
-             data-ad-format="auto"
-             data-full-width-responsive="true"></ins>
-        <script>
-            (adsbygoogle = window.adsbygoogle || []).push({});
-        </script>
-    </div>
-
-    <script>
-        const resultDisplay = document.getElementById('result');
-        const inputField = document.getElementById('input');
-
-        function append(value) {
-            inputField.value += value;
-        }
-
-        function clearInput() {
-            inputField.value = '';
-            resultDisplay.textContent = 'Result: ';
-        }
-
-        function backspace() {
-            inputField.value = inputField.value.slice(0, -1);
-        }
-
-        function calculate() {
-            try {
-                const expression = inputField.value.replace(/\^/g, '**');
-                const result = eval(expression);
-                resultDisplay.textContent = `Result: ${result}`;
-            } catch (error) {
-                resultDisplay.textContent = 'Error: Invalid Expression';
-            }
-        }
-
-        function startVoiceInput() {
-            if (!('webkitSpeechRecognition' in window)) {
-                alert('Speech recognition not supported in your browser.');
-                return;
-            }
-
-            const recognition = new webkitSpeechRecognition();
-            recognition.lang = 'en-US';
-            recognition.interimResults = false;
-            recognition.maxAlternatives = 1;
-
-            recognition.start();
-
-            recognition.onresult = (event) => {
-                const voiceInput = event.results[0][0].transcript.toLowerCase();
-                const replacements = {
-                    'plus': '+',
-                    'minus': '-',
-                    'times': '*',
-                    'multiplied by': '*',
-                    'divided by': '/',
-                    'over': '/',
-                };
-
-                let normalizedInput = voiceInput;
-                for (const [key, value] of Object.entries(replacements)) {
-                    normalizedInput = normalizedInput.replace(new RegExp(key, 'g'), value);
-                }
-
-                inputField.value = normalizedInput;
-                calculate();
-            };
-
-            recognition.onerror = (event) => {
-                alert('Speech recognition error: ' + event.error);
-            };
-        }
-
-        document.addEventListener('keydown', (event) => {
-            const key = event.key;
-            if (!isNaN(key) || ['+', '-', '*', '/', '(', ')', '.', '^', '%'].includes(key)) {
-                append(key);
-            } else if (key === 'Enter') {
-                calculate();
-            } else if (key === 'Backspace') {
-                backspace();
-            } else if (key === 'Escape') {
-                clearInput();
-            }
-        });
-    </script>
+    <script src="script.js"></script>
 </body>
 </html>
