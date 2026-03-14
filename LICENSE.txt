@@ -1,0 +1,74 @@
+﻿
+---
+
+# License
+
+Copyright © Devender
+
+All rights reserved.
+
+This software is sold under a **Restricted Usage License**.
+
+---
+
+## Allowed
+
+The buyer is permitted to:
+
+- Use this software for personal or commercial projects
+- Modify the source code
+- Integrate the calculator into their own applications
+- Customize UI or functionality
+
+---
+
+## Not Allowed
+
+The buyer **may NOT**:
+
+- Resell this software
+- Redistribute the software
+- Share the source code publicly
+- Upload it to marketplaces
+- Claim authorship of the original work
+
+This restriction applies whether the software is modified or not.
+
+---
+
+## Resale Permission
+
+If the buyer wishes to:
+
+- Resell the software
+- Redistribute the code
+- Sell it on marketplaces
+- Transfer ownership
+
+They **must contact the owner first** and obtain a separate commercial license.
+
+Contact:
+Devender Singh
+0.dark.phantom.8@gmail.com
+
+Failure to comply with these terms may lead to:
+
+- License termination
+- Removal requests
+- Legal consequences under applicable copyright laws.
+
+---
+
+# Contact
+
+For support, licensing, or resale permission:
+
+Email:
+0.dark.phantom.8@gmail.com
+
+
+---
+
+# Version
+
+Current Version: **1.0**
