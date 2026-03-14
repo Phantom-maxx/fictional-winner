@@ -2,94 +2,117 @@
 <html lang="en">
 
 <head>
+
+<!--
+Developer Signature
+Devender
+0.dark.phantom.8@gmail.com
+-->
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Voice Calculator</title>
+
+<title>Voice Scientific Calculator</title>
+
 <link rel="stylesheet" href="style.css">
+
 </head>
 
-<body class="light">
-
-<!-- MENU BUTTON -->
-<button class="menu-btn" onclick="toggleMenu()">☰</button>
-
-<!-- OVERLAY -->
-<div id="overlay" class="overlay hidden" onclick="toggleMenu()"></div>
-
-<!-- POPUP MENU -->
-<div id="menu" class="menu-popup hidden">
-
-<h3>Menu</h3>
-
-<button class="menu-item" onclick="toggleThemes()">🎨 Themes</button>
-<button class="menu-item" onclick="toggleHistory();toggleMenu()">📜 History</button>
-
-<div id="themes" class="submenu hidden">
-<button onclick="setTheme('light')">☀ Light</button>
-<button onclick="setTheme('dark')">🌙 Dark</button>
-<button onclick="setTheme('neon')">⚡ Neon</button>
-<button onclick="setTheme('ocean')">🌊 Ocean</button>
-</div>
-
-</div>
-
+<body class="theme-dark">
 
 <div class="calculator">
 
-<div id="result" class="result">Result:</div>
+<div class="topbar">
 
-<input id="input" type="text" placeholder="Enter calculation">
+<div class="title">Calculator</div>
 
-<div class="buttons">
+<div class="menu-area">
 
-<button onclick="append('7')">7</button>
-<button onclick="append('8')">8</button>
-<button onclick="append('9')">9</button>
-<button onclick="appendOperator('/')">/</button>
+<button id="menuBtn">☰</button>
 
-<button onclick="append('4')">4</button>
-<button onclick="append('5')">5</button>
-<button onclick="append('6')">6</button>
-<button onclick="appendOperator('*')">*</button>
+<div id="menu" class="menu">
 
-<button onclick="append('1')">1</button>
-<button onclick="append('2')">2</button>
-<button onclick="append('3')">3</button>
-<button onclick="appendOperator('-')">-</button>
+<button id="themeToggle">Theme</button>
+<button id="historyToggle">History</button>
+<button id="scienceToggle">Scientific</button>
 
-<button onclick="append('0')">0</button>
-<button onclick="appendDecimal()">.</button>
-<button onclick="calculate()">=</button>
-<button onclick="appendOperator('+')">+</button>
-
-<button onclick="append('(')">(</button>
-<button onclick="append(')')">)</button>
-<button onclick="append('%')">%</button>
-<button onclick="append('Math.sqrt(')">√</button>
-
-<button onclick="append('^')">Power</button>
-<button onclick="append('Math.PI')">π</button>
-<button onclick="append('Math.E')">e</button>
-<button onclick="backspace()">⌫</button>
+<label class="voice-option">
+<input type="checkbox" id="voiceOutput">
+Voice Output
+</label>
 
 </div>
 
-<div class="controls">
-<button onclick="clearInput()">Clear</button>
-<button onclick="startVoiceInput()">🎤 Speak</button>
+<div id="themeMenu" class="menu themeMenu">
+
+<button data-theme="theme-dark">Dark</button>
+<button data-theme="theme-light">Light</button>
+<button data-theme="theme-neon">Neon</button>
+
 </div>
 
 </div>
 
-<!-- HISTORY PANEL -->
-<div id="historyPanel" class="history hidden">
-
-<div class="history-header">
-History
-<button onclick="clearHistory()">🗑</button>
 </div>
 
+<input id="display" readonly placeholder="0">
+
+<div id="result">Result:</div>
+
+<div id="basicPad" class="pad">
+
+<button>7</button>
+<button>8</button>
+<button>9</button>
+<button data-op="/">÷</button>
+
+<button>4</button>
+<button>5</button>
+<button>6</button>
+<button data-op="*">×</button>
+
+<button>1</button>
+<button>2</button>
+<button>3</button>
+<button data-op="-">−</button>
+
+<button>0</button>
+<button>.</button>
+<button>=</button>
+<button data-op="+">+</button>
+
+<button data-op="^">^</button>
+<button>⌫</button>
+<button>C</button>
+<button id="voiceBtn">🎤</button>
+
+</div>
+
+<div id="sciPad" class="pad hidden">
+
+<button data-func="sin(">sin</button>
+<button data-func="cos(">cos</button>
+<button data-func="tan(">tan</button>
+<button data-func="sqrt(">√</button>
+
+<button data-func="log(">log</button>
+<button data-func="ln(">ln</button>
+<button>(</button>
+<button>)</button>
+
+<button data-func="pi">π</button>
+<button data-func="e">e</button>
+<button data-op="^">^</button>
+<button>=</button>
+
+</div>
+
+<div id="historyPanel">
+
+<h3>History</h3>
 <ul id="historyList"></ul>
+
+</div>
 
 </div>
 
