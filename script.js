@@ -7,6 +7,16 @@ Devender
 const display = document.getElementById("display")
 const resultBox = document.getElementById("result")
 
+/* BLOCK INVALID KEYBOARD INPUT */
+
+display.addEventListener("keypress",(e)=>{
+
+if(!/[0-9+\-*/().^]/.test(e.key)){
+e.preventDefault()
+}
+
+}
+
 const buttons = document.querySelectorAll(".pad button")
 const voiceBtn = document.getElementById("voiceBtn")
 
@@ -80,10 +90,11 @@ current.substring(0,start) +
 value +
 current.substring(end)
 
-display.selectionStart = display.selectionEnd = start + value.length
+let newPos = start + value.length
 
-display.focus()
-
+display.selectionStart = newPos
+display.selectionEnd = newPos
+  
 }
 /* BACKSPACE */
 
@@ -318,28 +329,99 @@ document.body.className = btn.dataset.theme
 
 })
 
-/* KEYBOARD SUPPORT */
+/* KEYBOARD SHORTCUTS */
 
 document.addEventListener("keydown",(e)=>{
 
 let key = e.key
 
-if(/[0-9+\-*/().^]/.test(key)) insert(key)
+const operators = ["+","-","*","/","^"]
 
-else if(key === "Enter"){
+/* NUMBERS */
 
+if(/^[0-9]$/.test(key)){
+e.preventDefault()
+insert(key)
+return
+}
+
+/* OPERATORS */
+
+if(operators.includes(key)){
+e.preventDefault()
+insert(key)
+return
+}
+
+/* DECIMAL */
+
+if(key === "."){
+e.preventDefault()
+insert(".")
+return
+}
+
+/* BRACKETS */
+
+if(key === "(" || key === ")"){
+e.preventDefault()
+insert(key)
+return
+}
+
+/* ENTER CALCULATE */
+
+if(key === "Enter"){
 e.preventDefault()
 calculate()
-
+return
 }
 
-else if(key === "Backspace"){
+/* SPACE = NORMAL SPACE */
 
+if(key === " "){
+e.preventDefault()
+insert(" ")
+return
+}
+
+/* BACKSPACE */
+
+if(key === "Backspace"){
 e.preventDefault()
 backspace()
-
+return
 }
 
-else if(key === "Escape") clearAll()
+/* ESC = CLEAR */
+
+if(key === "Escape"){
+e.preventDefault()
+clearAll()
+return
+}
+
+/* SHORTCUTS */
+
+if(key === "h"){
+e.preventDefault()
+document.getElementById("historyToggle").click()
+}
+
+if(key === "t"){
+e.preventDefault()
+document.getElementById("themeToggle").click()
+}
+
+if(key === "m"){
+e.preventDefault()
+document.getElementById("menuBtn").click()
+}
+
+/* BLOCK LETTER INPUT */
+
+if(/^[a-zA-Z]$/.test(key)){
+e.preventDefault()
+}
 
 })
