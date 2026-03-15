@@ -2,7 +2,7 @@
 box-sizing:border-box;
 margin:0;
 padding:0;
-font-family:Arial, Helvetica, sans-serif;
+font-family:Arial;
 }
 
 body{
@@ -14,76 +14,70 @@ transition:.3s;
 }
 
 .calculator{
-width:clamp(340px,92vw,560px);
-padding:24px;
-border-radius:18px;
+
+width:clamp(320px,90vw,560px);
+padding:20px;
+border-radius:15px;
 }
 
 .topbar{
 display:flex;
 justify-content:space-between;
-align-items:center;
-margin-bottom:14px;
+margin-bottom:10px;
 }
 
-.menu-area{
+.menuArea{
 position:relative;
 }
 
-#menuBtn{
-font-size:24px;
-cursor:pointer;
-}
-
 .menu{
+
 display:none;
 flex-direction:column;
 position:absolute;
 right:0;
-top:38px;
-padding:16px;
-border-radius:12px;
+top:35px;
 background:#333;
-gap:10px;
-width:200px;
-}
-
-.menu button{
 padding:10px;
 border-radius:8px;
-cursor:pointer;
+gap:6px;
+width:180px;
+z-index:10;
+
 }
 
 .themeMenu{
-right:210px;
+right:190px;
 }
 
-input{
+#display{
+
 width:100%;
-padding:16px;
 font-size:24px;
-border-radius:12px;
-border:2px solid #666;
-margin-bottom:12px;
+padding:12px;
+margin-bottom:10px;
+border-radius:8px;
+border:2px solid #555;
 overflow-x:auto;
-}
 
-#result{
-margin-bottom:14px;
 }
 
 .pad{
+
 display:grid;
 grid-template-columns:repeat(4,1fr);
-gap:12px;
+gap:8px;
+
 }
 
 .pad button{
+
 padding:18px;
-font-size:20px;
+font-size:18px;
 border:none;
-border-radius:12px;
+border-radius:8px;
 cursor:pointer;
+
 }
 
 .hidden{
@@ -91,8 +85,10 @@ display:none;
 }
 
 #historyPanel{
-margin-top:20px;
+margin-top:15px;
 display:none;
+max-height:150px;
+overflow:auto;
 }
 
 /* THEMES */
@@ -107,12 +103,12 @@ background:#1f1f1f;
 }
 
 .theme-dark button{
-background:#3a3a3a;
+background:#444;
 color:white;
 }
 
 .theme-light{
-background:#f0f0f0;
+background:#eaeaea;
 color:black;
 }
 
@@ -121,7 +117,7 @@ background:white;
 }
 
 .theme-light button{
-background:#e5e5e5;
+background:#ddd;
 }
 
 .theme-neon{
@@ -131,23 +127,10 @@ color:#00ffe1;
 
 .theme-neon .calculator{
 background:#001d3d;
-box-shadow:0 0 25px #00ffe1;
+box-shadow:0 0 20px #00ffe1;
 }
 
 .theme-neon button{
 background:#003566;
 color:#00ffe1;
-}
-
-@media (max-width:600px){
-
-.calculator{
-width:96vw;
-}
-
-.pad button{
-padding:20px;
-font-size:21px;
-}
-
 }
