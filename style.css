@@ -22,6 +22,17 @@ min-height:100vh;
 background:#121212;
 }
 
+/* ===== GLOBAL SMOOTH TRANSITIONS ===== */
+
+*{
+transition:
+background 0.25s ease,
+color 0.25s ease,
+border 0.25s ease,
+transform 0.12s ease,
+box-shadow 0.15s ease;
+}
+
 /* ===== CALCULATOR ===== */
 
 .calculator{
@@ -75,6 +86,16 @@ transform:translateY(0);
 
 }
 
+/* ===== CALCULATOR HOVER EFFECT ===== */
+
+.calculator{
+transition:box-shadow 0.3s ease;
+}
+
+.calculator:hover{
+box-shadow:0 10px 30px rgba(0,0,0,0.35);
+}
+
 /* ===== BUTTON GRID ===== */
 
 .pad{
@@ -109,6 +130,26 @@ box-shadow:0 4px 10px rgba(0,0,0,0.25);
 .pad button:active{
 transform:scale(0.94);
 box-shadow:0 2px 5px rgba(0,0,0,0.35);
+}
+
+/* ===== RESULT POP EFFECT ===== */
+
+#result{
+animation:resultFade 0.25s ease;
+}
+
+@keyframes resultFade{
+
+0%{
+opacity:0;
+transform:translateY(6px);
+}
+
+100%{
+opacity:1;
+transform:translateY(0);
+}
+
 }
 
 /* ===== MENU BUTTON ===== */
@@ -153,6 +194,21 @@ transform:translateY(0);
 pointer-events:auto;
 }
 
+/* ===== MENU ANIMATION ===== */
+
+#menu{
+opacity:0;
+transform:translateY(-10px);
+pointer-events:none;
+transition:all 0.2s ease;
+}
+
+#menu.active{
+opacity:1;
+transform:translateY(0);
+pointer-events:auto;
+}
+
 /* ===== HISTORY ===== */
 
 #historyPanel{
@@ -188,6 +244,18 @@ border-bottom:1px solid #444;
 
 #historyPanel li:hover{
 background:#3b3b3b;
+}
+
+/* ===== HISTORY PANEL ANIMATION ===== */
+
+#historyPanel{
+max-height:0;
+overflow:hidden;
+transition:max-height 0.35s ease;
+}
+
+#historyPanel.show{
+max-height:400px;
 }
 
 /* ===== SCIENTIFIC PANEL ===== */
