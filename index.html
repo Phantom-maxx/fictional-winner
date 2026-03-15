@@ -1,9 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Advanced Calculator</title>
 <link rel="stylesheet" href="style.css">
 </head>
@@ -20,13 +19,13 @@
 <button id="scienceToggle">Scientific</button>
 <button id="themeToggle">Themes</button>
 
-<div id="themeMenu">
+<div id="themeMenu" class="hidden">
 <button data-theme="dark">Dark</button>
 <button data-theme="light">Light</button>
 <button data-theme="neon">Neon</button>
 </div>
 
-<label class="voiceSwitch">
+<label class="voiceToggle">
 Voice Output
 <input type="checkbox" id="voiceOutput">
 </label>
@@ -86,6 +85,7 @@ Voice Output
 <button>=</button>
 
 </div>
+
 
 <div id="historyPanel">
 <ul id="historyList"></ul>
