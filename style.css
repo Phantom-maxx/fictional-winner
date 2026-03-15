@@ -1,17 +1,10 @@
-/* ===== GLOBAL RESET ===== */
-
 *{
 margin:0;
 padding:0;
 box-sizing:border-box;
-font-family:Arial,Helvetica,sans-serif;
+font-family:Arial;
 
-transition:
-background 0.25s ease,
-color 0.25s ease,
-border 0.25s ease,
-transform 0.12s ease,
-box-shadow 0.15s ease;
+transition:all .25s ease;
 }
 
 body{
@@ -22,81 +15,32 @@ min-height:100vh;
 background:#121212;
 }
 
-/* ===== GLOBAL SMOOTH TRANSITIONS ===== */
-
-*{
-transition:
-background 0.25s ease,
-color 0.25s ease,
-border 0.25s ease,
-transform 0.12s ease,
-box-shadow 0.15s ease;
-}
-
-/* ===== CALCULATOR ===== */
-
 .calculator{
 width:95%;
 max-width:420px;
 background:#1e1e1e;
 padding:20px;
 border-radius:12px;
-box-shadow:0 10px 30px rgba(0,0,0,0.35);
+box-shadow:0 10px 35px rgba(0,0,0,.4);
 position:relative;
 }
-
-.calculator:hover{
-box-shadow:0 12px 35px rgba(0,0,0,0.45);
-}
-
-/* ===== DISPLAY ===== */
 
 #display{
 width:100%;
 padding:14px;
 font-size:22px;
 border:none;
-outline:none;
 border-radius:8px;
 background:#2b2b2b;
 color:white;
 overflow-x:auto;
 }
 
-/* ===== RESULT ===== */
-
 #result{
 margin-top:8px;
-font-size:18px;
 color:#aaa;
-animation:resultFade 0.25s ease;
+font-size:18px;
 }
-
-@keyframes resultFade{
-
-0%{
-opacity:0;
-transform:translateY(6px);
-}
-
-100%{
-opacity:1;
-transform:translateY(0);
-}
-
-}
-
-/* ===== CALCULATOR HOVER EFFECT ===== */
-
-.calculator{
-transition:box-shadow 0.3s ease;
-}
-
-.calculator:hover{
-box-shadow:0 10px 30px rgba(0,0,0,0.35);
-}
-
-/* ===== BUTTON GRID ===== */
 
 .pad{
 margin-top:15px;
@@ -105,54 +49,26 @@ grid-template-columns:repeat(4,1fr);
 gap:10px;
 }
 
-/* ===== BUTTON STYLE ===== */
-
 .pad button{
 
-cursor:pointer;
-border:none;
-outline:none;
-font-size:18px;
-border-radius:8px;
 padding:14px;
+font-size:18px;
+border:none;
+border-radius:8px;
 background:#2b2b2b;
 color:white;
-
-transition:transform 0.08s ease, box-shadow 0.08s ease;
+cursor:pointer;
 
 }
 
 .pad button:hover{
 transform:translateY(-2px);
-box-shadow:0 4px 10px rgba(0,0,0,0.25);
+box-shadow:0 4px 12px rgba(0,0,0,.3);
 }
 
 .pad button:active{
-transform:scale(0.94);
-box-shadow:0 2px 5px rgba(0,0,0,0.35);
+transform:scale(.94);
 }
-
-/* ===== RESULT POP EFFECT ===== */
-
-#result{
-animation:resultFade 0.25s ease;
-}
-
-@keyframes resultFade{
-
-0%{
-opacity:0;
-transform:translateY(6px);
-}
-
-100%{
-opacity:1;
-transform:translateY(0);
-}
-
-}
-
-/* ===== MENU BUTTON ===== */
 
 #menuBtn{
 position:absolute;
@@ -162,18 +78,13 @@ cursor:pointer;
 font-size:22px;
 }
 
-/* ===== MENU ===== */
-
 #menu{
 
 position:absolute;
 top:45px;
 right:10px;
-
 background:#2b2b2b;
-
 border-radius:8px;
-
 padding:10px;
 
 display:flex;
@@ -181,94 +92,54 @@ flex-direction:column;
 gap:8px;
 
 opacity:0;
-transform:translateY(-10px);
 pointer-events:none;
-
-transition:all 0.2s ease;
+transform:translateY(-10px);
 
 }
 
 #menu.active{
 opacity:1;
-transform:translateY(0);
 pointer-events:auto;
-}
-
-/* ===== MENU ANIMATION ===== */
-
-#menu{
-opacity:0;
-transform:translateY(-10px);
-pointer-events:none;
-transition:all 0.2s ease;
-}
-
-#menu.active{
-opacity:1;
 transform:translateY(0);
-pointer-events:auto;
 }
-
-/* ===== HISTORY ===== */
 
 #historyPanel{
 
 margin-top:15px;
 background:#2b2b2b;
-
 border-radius:8px;
-padding:10px;
 
 max-height:0;
 overflow:hidden;
-
-transition:max-height 0.35s ease;
+transition:max-height .35s ease;
 
 }
 
 #historyPanel.show{
-max-height:400px;
+max-height:300px;
 }
 
 #historyPanel ul{
 list-style:none;
-max-height:300px;
+max-height:260px;
 overflow:auto;
 }
 
 #historyPanel li{
-padding:6px;
-cursor:pointer;
+padding:8px;
 border-bottom:1px solid #444;
+cursor:pointer;
 }
 
 #historyPanel li:hover{
-background:#3b3b3b;
+background:#3a3a3a;
 }
-
-/* ===== HISTORY PANEL ANIMATION ===== */
-
-#historyPanel{
-max-height:0;
-overflow:hidden;
-transition:max-height 0.35s ease;
-}
-
-#historyPanel.show{
-max-height:400px;
-}
-
-/* ===== SCIENTIFIC PANEL ===== */
 
 .hidden{
 display:none;
 }
 
-/* ===== THEMES ===== */
-
-body.dark{
-background:#121212;
-}
+/* THEMES */
 
 body.light{
 background:#f4f4f4;
@@ -284,7 +155,7 @@ color:black;
 }
 
 body.neon{
-background:#050505;
+background:#000;
 }
 
 body.neon .calculator{
