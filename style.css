@@ -3,7 +3,7 @@ margin:0;
 padding:0;
 box-sizing:border-box;
 font-family:Arial;
-transition:all .25s ease;
+transition:0.25s;
 }
 
 body{
@@ -26,7 +26,7 @@ position:relative;
 
 #display{
 width:100%;
-padding:14px;
+padding:15px;
 font-size:22px;
 border:none;
 border-radius:8px;
@@ -60,7 +60,6 @@ cursor:pointer;
 
 .pad button:hover{
 transform:translateY(-2px);
-box-shadow:0 4px 12px rgba(0,0,0,.3);
 }
 
 .pad button:active{
@@ -80,8 +79,8 @@ position:absolute;
 top:45px;
 right:10px;
 background:#2b2b2b;
-border-radius:8px;
 padding:10px;
+border-radius:8px;
 display:flex;
 flex-direction:column;
 gap:8px;
@@ -102,7 +101,7 @@ background:#2b2b2b;
 border-radius:8px;
 max-height:0;
 overflow:hidden;
-transition:max-height .35s ease;
+transition:max-height .3s;
 }
 
 #historyPanel.show{
@@ -125,7 +124,8 @@ cursor:pointer;
 display:none;
 }
 
-/* THEMES */
+
+/* LIGHT */
 
 body.light{
 background:#f4f4f4;
@@ -139,6 +139,9 @@ body.light #display{
 background:#eaeaea;
 color:black;
 }
+
+
+/* NEON */
 
 body.neon{
 background:black;
