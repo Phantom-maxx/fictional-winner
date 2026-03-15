@@ -29,16 +29,18 @@ let history=[]
 
 function insert(value){
 
-let start = display.selectionStart
-let end = display.selectionEnd
+let start = display.selectionStart ?? display.value.length
+let end = display.selectionEnd ?? display.value.length
 let current = display.value
+
+const operators = ["+","-","*","/","^"]
 
 /* DECIMAL PROTECTION */
 
 if(value === "."){
 
-let left = current.substring(0,start)
-let lastNumber = left.split(/[+\-*/^()]/).pop()
+let leftPart = current.substring(0,start)
+let lastNumber = leftPart.split(/[+\-*/^()]/).pop()
 
 if(lastNumber.includes(".")){
 return
@@ -46,9 +48,7 @@ return
 
 }
 
-/* OPERATOR HANDLING */
-
-const operators = ["+","-","*","/","^"]
+/* OPERATOR CORRECTION */
 
 if(operators.includes(value)){
 
@@ -65,10 +65,11 @@ current.substring(0,start-1) +
 value +
 current.substring(start)
 
-display.selectionStart =
-display.selectionEnd = start
+display.selectionStart = display.selectionEnd = start
 
 return
+
+}
 
 }
 
@@ -79,12 +80,11 @@ current.substring(0,start) +
 value +
 current.substring(end)
 
-display.selectionStart =
-display.selectionEnd = start + value.length
+display.selectionStart = display.selectionEnd = start + value.length
+
+display.focus()
 
 }
-}
-
 /* BACKSPACE */
 
 function backspace(){
