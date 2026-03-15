@@ -8,7 +8,6 @@ const display = document.getElementById("display")
 const resultBox = document.getElementById("result")
 
 const buttons = document.querySelectorAll(".pad button")
-
 const voiceBtn = document.getElementById("voiceBtn")
 
 const historyPanel = document.getElementById("historyPanel")
@@ -26,42 +25,46 @@ const basicPad = document.getElementById("basicPad")
 
 let history=[]
 
-/* INPUT FUNCTIONS */
+/* INSERT WITH CURSOR SUPPORT */
 
-function insert(v){
+function insert(value){
 
 let start = display.selectionStart
 let end = display.selectionEnd
 
 display.value =
-display.value.substring(0,start)+
-v+
+display.value.substring(0,start) +
+value +
 display.value.substring(end)
 
-display.selectionStart=display.selectionEnd=start+v.length
+display.selectionStart = display.selectionEnd = start + value.length
 
 }
+
+/* BACKSPACE */
 
 function backspace(){
 
-let start=display.selectionStart
+let start = display.selectionStart
 
-if(start>0){
+if(start > 0){
 
-display.value=
-display.value.slice(0,start-1)+
+display.value =
+display.value.slice(0,start-1) +
 display.value.slice(start)
 
-display.selectionStart=display.selectionEnd=start-1
+display.selectionStart = display.selectionEnd = start-1
 
 }
 
 }
+
+/* CLEAR */
 
 function clearAll(){
 
-display.value=""
-resultBox.innerText="Result:"
+display.value = ""
+resultBox.innerText = "Result:"
 
 }
 
@@ -69,30 +72,28 @@ resultBox.innerText="Result:"
 
 function calculate(){
 
-let exp=display.value
+let exp = display.value
 
 try{
 
-exp=exp.replace(/\^/g,"**")
-exp=exp.replace(/sin/g,"Math.sin")
-exp=exp.replace(/cos/g,"Math.cos")
-exp=exp.replace(/tan/g,"Math.tan")
-exp=exp.replace(/sqrt/g,"Math.sqrt")
-exp=exp.replace(/log/g,"Math.log10")
-exp=exp.replace(/ln/g,"Math.log")
-exp=exp.replace(/pi/g,"Math.PI")
-exp=exp.replace(/e/g,"Math.E")
+exp = exp.replace(/\^/g,"**")
+exp = exp.replace(/sin/g,"Math.sin")
+exp = exp.replace(/cos/g,"Math.cos")
+exp = exp.replace(/tan/g,"Math.tan")
+exp = exp.replace(/sqrt/g,"Math.sqrt")
+exp = exp.replace(/log/g,"Math.log10")
+exp = exp.replace(/ln/g,"Math.log")
+exp = exp.replace(/pi/g,"Math.PI")
+exp = exp.replace(/e/g,"Math.E")
 
-let res = Function("return "+exp)()
+let result = Function("return " + exp)()
 
-resultBox.innerText="Result: "+res
+resultBox.innerText = "Result: " + result
 
-addHistory(display.value,res)
+addHistory(display.value,result)
 
 if(voiceOutputToggle.checked){
-
-speak(res)
-
+speak(result)
 }
 
 }catch{
@@ -125,7 +126,11 @@ let li=document.createElement("li")
 
 li.textContent=item
 
-li.onclick=()=>display.value=item.split("=")[0]
+li.onclick=()=>{
+
+display.value=item.split("=")[0]
+
+}
 
 historyList.appendChild(li)
 
@@ -137,25 +142,27 @@ historyList.appendChild(li)
 
 buttons.forEach(btn=>{
 
-btn.onclick=()=>{
+btn.addEventListener("click",()=>{
 
-if(btn.id==="voiceBtn") return
+/* PREVENT MIC FROM INSERTING */
 
-let txt=btn.innerText
+if(btn.id === "voiceBtn") return
+
+let txt = btn.innerText
 
 if(btn.dataset.op) insert(btn.dataset.op)
 
 else if(btn.dataset.func) insert(btn.dataset.func)
 
-else if(txt==="=") calculate()
+else if(txt === "=") calculate()
 
-else if(txt==="⌫") backspace()
+else if(txt === "⌫") backspace()
 
-else if(txt==="C") clearAll()
+else if(txt === "C") clearAll()
 
 else insert(txt)
 
-}
+})
 
 })
 
@@ -163,11 +170,9 @@ else insert(txt)
 
 function speak(text){
 
-if(!speechSynthesis) return
-
 speechSynthesis.cancel()
 
-let msg=new SpeechSynthesisUtterance("The result is "+text)
+let msg = new SpeechSynthesisUtterance("The result is " + text)
 
 speechSynthesis.speak(msg)
 
@@ -179,13 +184,13 @@ let recognition
 
 if('webkitSpeechRecognition' in window){
 
-recognition=new webkitSpeechRecognition()
+recognition = new webkitSpeechRecognition()
 
 recognition.lang="en-US"
 
-recognition.onresult=(e)=>{
+recognition.onresult=(event)=>{
 
-let speech=e.results[0][0].transcript
+let speech = event.results[0][0].transcript
 
 insert(speech)
 
@@ -205,14 +210,16 @@ menuBtn.onclick=(e)=>{
 
 e.stopPropagation()
 
-menu.style.display=
-menu.style.display==="flex"?"none":"flex"
+menu.style.display =
+menu.style.display === "flex" ? "none" : "flex"
 
 }
 
+/* CLOSE MENUS */
+
 document.addEventListener("click",(e)=>{
 
-if(!menu.contains(e.target) && e.target!==menuBtn){
+if(!menu.contains(e.target) && e.target !== menuBtn){
 
 menu.style.display="none"
 themeMenu.style.display="none"
@@ -225,8 +232,8 @@ themeMenu.style.display="none"
 
 document.getElementById("historyToggle").onclick=()=>{
 
-historyPanel.style.display=
-historyPanel.style.display==="block"?"none":"block"
+historyPanel.style.display =
+historyPanel.style.display === "block" ? "none" : "block"
 
 }
 
@@ -252,8 +259,8 @@ sciPad.classList.add("hidden")
 
 document.getElementById("themeToggle").onclick=()=>{
 
-themeMenu.style.display=
-themeMenu.style.display==="flex"?"none":"flex"
+themeMenu.style.display =
+themeMenu.style.display === "flex" ? "none" : "flex"
 
 }
 
@@ -261,7 +268,7 @@ document.querySelectorAll("[data-theme]").forEach(btn=>{
 
 btn.onclick=()=>{
 
-document.body.className=btn.dataset.theme
+document.body.className = btn.dataset.theme
 
 }
 
@@ -271,26 +278,24 @@ document.body.className=btn.dataset.theme
 
 document.addEventListener("keydown",(e)=>{
 
-let key=e.key
+let key = e.key
 
 if(/[0-9+\-*/().^]/.test(key)) insert(key)
 
-else if(key==="Enter"){
+else if(key === "Enter"){
 
 e.preventDefault()
-
 calculate()
 
 }
 
-else if(key==="Backspace"){
+else if(key === "Backspace"){
 
 e.preventDefault()
-
 backspace()
 
 }
 
-else if(key==="Escape") clearAll()
+else if(key === "Escape") clearAll()
 
 })
