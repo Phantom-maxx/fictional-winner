@@ -389,8 +389,7 @@ menuBtn.onclick = (e)=>{
 
 e.stopPropagation();
 
-menu.style.display =
-menu.style.display === "flex" ? "none" : "flex";
+menu.classList.toggle("active");
 
 };
 
@@ -413,9 +412,8 @@ themeMenu.style.display="none";
 
 document.getElementById("historyToggle").onclick = ()=>{
 
-historyPanel.style.display =
-historyPanel.style.display === "block" ? "none" : "block";
-
+historyPanel.classList.toggle("show");
+   
 };
 
 
