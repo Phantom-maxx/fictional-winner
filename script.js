@@ -1,165 +1,91 @@
-/* KEYBOARD SHORTCUTS */
-
-document.addEventListener("keydown",(e)=>{
-
-let key = e.key
-const operators = ["+","-","*","/","^"]
-
-/* NUMBERS */
-
-if(/^[0-9]$/.test(key)){
-insert(key)
-return
-}
-
-/* OPERATORS */
-
-if(operators.includes(key)){
-insert(key)
-return
-}
-
-/* DECIMAL */
-
-if(key === "."){
-insert(".")
-return
-}
-
-/* BRACKETS */
-
-if(key === "(" || key === ")"){
-insert(key)
-return
-}
-
-/* ENTER CALCULATE */
-
-if(key === "Enter"){
-e.preventDefault()
-calculate()
-return
-}
-
-/* BACKSPACE */
-
-if(key === "Backspace"){
-e.preventDefault()
-backspace()
-return
-}
-
-/* ESC CLEAR */
-
-if(key === "Escape"){
-clearAll()
-return
-}
-
-/* HISTORY */
-
-if(key === "h" || key === "H"){
-document.getElementById("historyToggle").click()
-}
-
-/* THEME */
-
-if(key === "t" || key === "T"){
-document.getElementById("themeToggle").click()
-}
-
-/* MENU */
-
-if(key === "m" || key === "M"){
-document.getElementById("menuBtn").click()
-}
-
-})/*
+/*
 Developer Signature
 Devender
 0.dark.phantom.8@gmail.com
 */
 
-const display = document.getElementById("display")
-const resultBox = document.getElementById("result")
+const display = document.getElementById("display");
+const resultBox = document.getElementById("result");
 
-const buttons = document.querySelectorAll(".pad button")
-const voiceBtn = document.getElementById("voiceBtn")
+const buttons = document.querySelectorAll(".pad button");
+const voiceBtn = document.getElementById("voiceBtn");
 
-const historyPanel = document.getElementById("historyPanel")
-const historyList = document.getElementById("historyList")
+const historyPanel = document.getElementById("historyPanel");
+const historyList = document.getElementById("historyList");
 
-const voiceOutputToggle = document.getElementById("voiceOutput")
+const voiceOutputToggle = document.getElementById("voiceOutput");
 
-const menuBtn = document.getElementById("menuBtn")
-const menu = document.getElementById("menu")
+const menuBtn = document.getElementById("menuBtn");
+const menu = document.getElementById("menu");
 
-const themeMenu = document.getElementById("themeMenu")
+const themeMenu = document.getElementById("themeMenu");
 
-const sciPad = document.getElementById("sciPad")
-const basicPad = document.getElementById("basicPad")
+const sciPad = document.getElementById("sciPad");
+const basicPad = document.getElementById("basicPad");
 
-let history=[]
+let history = [];
+
 
 /* =========================
-   INSERT WITH VALIDATION
+   INSERT FUNCTION
 ========================= */
 
 function insert(value){
 
-let start = display.selectionStart ?? display.value.length
-let end = display.selectionEnd ?? display.value.length
-let current = display.value
+let start = display.selectionStart ?? display.value.length;
+let end = display.selectionEnd ?? display.value.length;
+let current = display.value;
 
-const operators = ["+","-","*","/","^"]
+const operators = ["+","-","*","/","^"];
 
-/* DECIMAL PROTECTION */
+/* prevent multiple decimals */
 
 if(value === "."){
 
-let left = current.substring(0,start)
-let lastNumber = left.split(/[+\-*/^()]/).pop()
+let left = current.substring(0,start);
+let lastNumber = left.split(/[+\-*/^()]/).pop();
 
-if(lastNumber.includes(".")){
-return
-}
+if(lastNumber.includes(".")) return;
 
 }
 
-/* OPERATOR OVERWRITE */
+/* overwrite operators */
 
 if(operators.includes(value)){
 
-if(start === 0 && value !== "-") return
+if(start === 0 && value !== "-") return;
 
-let prevChar = current[start-1]
+let prev = current[start-1];
 
-if(operators.includes(prevChar)){
+if(operators.includes(prev)){
 
 display.value =
 current.substring(0,start-1) +
 value +
-current.substring(start)
+current.substring(start);
 
-display.selectionStart = display.selectionEnd = start
-return
+display.selectionStart = display.selectionEnd = start;
+
+return;
 
 }
 
 }
 
-/* NORMAL INSERT */
+/* normal insert */
 
 display.value =
 current.substring(0,start) +
 value +
-current.substring(end)
+current.substring(end);
 
-let pos = start + value.length
-display.selectionStart = pos
-display.selectionEnd = pos
+let pos = start + value.length;
+
+display.selectionStart = pos;
+display.selectionEnd = pos;
 
 }
+
 
 /* =========================
    BACKSPACE
@@ -167,19 +93,20 @@ display.selectionEnd = pos
 
 function backspace(){
 
-let start = display.selectionStart
+let start = display.selectionStart;
 
-if(start>0){
+if(start > 0){
 
 display.value =
 display.value.slice(0,start-1) +
-display.value.slice(start)
+display.value.slice(start);
 
-display.selectionStart = display.selectionEnd = start-1
+display.selectionStart = display.selectionEnd = start-1;
+
+}
 
 }
 
-}
 
 /* =========================
    CLEAR
@@ -187,10 +114,11 @@ display.selectionStart = display.selectionEnd = start-1
 
 function clearAll(){
 
-display.value=""
-resultBox.innerText="Result:"
+display.value = "";
+resultBox.innerText = "Result:";
 
 }
+
 
 /* =========================
    CALCULATE
@@ -198,37 +126,38 @@ resultBox.innerText="Result:"
 
 function calculate(){
 
-let exp = display.value
+let exp = display.value;
 
 try{
 
-exp = exp.replace(/\^/g,"**")
-exp = exp.replace(/sin/g,"Math.sin")
-exp = exp.replace(/cos/g,"Math.cos")
-exp = exp.replace(/tan/g,"Math.tan")
-exp = exp.replace(/sqrt/g,"Math.sqrt")
-exp = exp.replace(/log/g,"Math.log10")
-exp = exp.replace(/ln/g,"Math.log")
-exp = exp.replace(/pi/g,"Math.PI")
-exp = exp.replace(/e/g,"Math.E")
+exp = exp.replace(/\^/g,"**");
+exp = exp.replace(/sin/g,"Math.sin");
+exp = exp.replace(/cos/g,"Math.cos");
+exp = exp.replace(/tan/g,"Math.tan");
+exp = exp.replace(/sqrt/g,"Math.sqrt");
+exp = exp.replace(/log/g,"Math.log10");
+exp = exp.replace(/ln/g,"Math.log");
+exp = exp.replace(/pi/g,"Math.PI");
+exp = exp.replace(/e/g,"Math.E");
 
-let result = Function("return "+exp)()
+let result = Function("return "+exp)();
 
-resultBox.innerText="Result: "+result
+resultBox.innerText = "Result: " + result;
 
-addHistory(display.value,result)
+addHistory(display.value,result);
 
 if(voiceOutputToggle.checked){
-speak(result)
+speak(result);
 }
 
 }catch{
 
-resultBox.innerText="Error"
+resultBox.innerText="Error";
 
 }
 
 }
+
 
 /* =========================
    HISTORY
@@ -236,34 +165,36 @@ resultBox.innerText="Error"
 
 function addHistory(exp,res){
 
-history.unshift(exp+" = "+res)
+history.unshift(exp+" = "+res);
 
-if(history.length>30) history.pop()
+if(history.length > 30) history.pop();
 
-renderHistory()
+renderHistory();
 
 }
 
 function renderHistory(){
 
-historyList.innerHTML=""
+historyList.innerHTML = "";
 
 history.forEach(item=>{
 
-let li=document.createElement("li")
-li.textContent=item
+let li = document.createElement("li");
 
-li.onclick=()=>{
+li.textContent = item;
 
-display.value=item.split("=")[0]
+li.onclick = ()=>{
+
+display.value = item.split("=")[0];
+
+};
+
+historyList.appendChild(li);
+
+});
 
 }
 
-historyList.appendChild(li)
-
-})
-
-}
 
 /* =========================
    BUTTON INPUT
@@ -271,39 +202,52 @@ historyList.appendChild(li)
 
 buttons.forEach(btn=>{
 
-btn.addEventListener("click",function(){
+btn.addEventListener("click",()=>{
 
-if(btn.id==="voiceBtn") return
+if(btn.id === "voiceBtn") return;
 
-let txt=btn.innerText
+let txt = btn.innerText;
 
 if(btn.dataset.op){
-insert(btn.dataset.op)
+
+insert(btn.dataset.op);
+
 }
 
 else if(btn.dataset.func){
-insert(btn.dataset.func)
+
+insert(btn.dataset.func);
+
 }
 
-else if(txt==="="){
-calculate()
+else if(txt === "="){
+
+calculate();
+
 }
 
-else if(txt==="⌫"){
-backspace()
+else if(txt === "⌫"){
+
+backspace();
+
 }
 
-else if(txt==="C"){
-clearAll()
+else if(txt === "C"){
+
+clearAll();
+
 }
 
 else{
-insert(txt)
+
+insert(txt);
+
 }
 
-})
+});
 
-})
+});
+
 
 /* =========================
    KEYBOARD SUPPORT
@@ -311,65 +255,85 @@ insert(txt)
 
 document.addEventListener("keydown",(e)=>{
 
-let key=e.key
-const operators=["+","-","*","/","^"]
+let key = e.key;
+const operators = ["+","-","*","/","^"];
+
+/* numbers */
 
 if(/^[0-9]$/.test(key)){
-insert(key)
-return
+e.preventDefault();
+insert(key);
+return;
 }
+
+/* operators */
 
 if(operators.includes(key)){
-insert(key)
-return
+e.preventDefault();
+insert(key);
+return;
 }
 
-if(key==="."){
-insert(".")
-return
+/* decimal */
+
+if(key === "."){
+e.preventDefault();
+insert(".");
+return;
 }
 
-if(key==="(" || key===")"){
-insert(key)
-return
+/* brackets */
+
+if(key === "(" || key === ")"){
+e.preventDefault();
+insert(key);
+return;
 }
 
-if(key==="Enter"){
-e.preventDefault()
-calculate()
-return
+/* calculate */
+
+if(key === "Enter"){
+e.preventDefault();
+calculate();
+return;
 }
 
-if(key==="Backspace"){
-e.preventDefault()
-backspace()
-return
+/* delete */
+
+if(key === "Backspace"){
+e.preventDefault();
+backspace();
+return;
 }
 
-if(key==="Escape"){
-clearAll()
-return
+/* clear */
+
+if(key === "Escape"){
+e.preventDefault();
+clearAll();
+return;
 }
 
-/* HISTORY */
+/* history */
 
-if(key==="h" || key==="H"){
-document.getElementById("historyToggle").click()
+if(key === "h" || key === "H"){
+document.getElementById("historyToggle").click();
 }
 
-/* THEME */
+/* theme */
 
-if(key==="t" || key==="T"){
-document.getElementById("themeToggle").click()
+if(key === "t" || key === "T"){
+document.getElementById("themeToggle").click();
 }
 
-/* MENU */
+/* menu */
 
-if(key==="m" || key==="M"){
-document.getElementById("menuBtn").click()
+if(key === "m" || key === "M"){
+document.getElementById("menuBtn").click();
 }
 
-})
+});
+
 
 /* =========================
    VOICE OUTPUT
@@ -377,113 +341,121 @@ document.getElementById("menuBtn").click()
 
 function speak(text){
 
-speechSynthesis.cancel()
+speechSynthesis.cancel();
 
-let msg=new SpeechSynthesisUtterance("The result is "+text)
+let msg = new SpeechSynthesisUtterance("The result is " + text);
 
-speechSynthesis.speak(msg)
+speechSynthesis.speak(msg);
 
 }
+
 
 /* =========================
    VOICE INPUT
 ========================= */
 
-let recognition
+let recognition;
 
-if('webkitSpeechRecognition' in window){
+if("webkitSpeechRecognition" in window){
 
-recognition=new webkitSpeechRecognition()
-recognition.lang="en-US"
+recognition = new webkitSpeechRecognition();
 
-recognition.onresult=(event)=>{
+recognition.lang = "en-US";
 
-let speech=event.results[0][0].transcript
+recognition.onresult = (event)=>{
 
-insert(speech)
+let speech = event.results[0][0].transcript;
+
+insert(speech);
+
+};
 
 }
 
-}
-
-voiceBtn.onclick=()=>{
+voiceBtn.onclick = ()=>{
 
 if(recognition){
-recognition.start()
+recognition.start();
 }
 
-}
+};
+
 
 /* =========================
    MENU
 ========================= */
 
-menuBtn.onclick=(e)=>{
+menuBtn.onclick = (e)=>{
 
-e.stopPropagation()
+e.stopPropagation();
 
 menu.style.display =
-menu.style.display==="flex" ? "none":"flex"
+menu.style.display === "flex" ? "none" : "flex";
 
-}
+};
 
-/* CLOSE MENUS */
+
+/* close menus */
 
 document.addEventListener("click",(e)=>{
 
-if(!menu.contains(e.target) && e.target!==menuBtn){
+if(!menu.contains(e.target) && e.target !== menuBtn){
 
-menu.style.display="none"
-themeMenu.style.display="none"
+menu.style.display="none";
+themeMenu.style.display="none";
 
 }
 
-})
+});
 
-/* HISTORY TOGGLE */
 
-document.getElementById("historyToggle").onclick=()=>{
+/* history toggle */
+
+document.getElementById("historyToggle").onclick = ()=>{
 
 historyPanel.style.display =
-historyPanel.style.display==="block" ? "none":"block"
+historyPanel.style.display === "block" ? "none" : "block";
 
-}
+};
 
-/* SCIENTIFIC PANEL */
 
-document.getElementById("scienceToggle").onclick=()=>{
+/* scientific panel */
+
+document.getElementById("scienceToggle").onclick = ()=>{
 
 if(sciPad.classList.contains("hidden")){
 
-sciPad.classList.remove("hidden")
-basicPad.classList.add("hidden")
+sciPad.classList.remove("hidden");
+basicPad.classList.add("hidden");
 
 }else{
 
-basicPad.classList.remove("hidden")
-sciPad.classList.add("hidden")
+basicPad.classList.remove("hidden");
+sciPad.classList.add("hidden");
 
 }
 
-}
+};
 
-/* THEME MENU */
 
-document.getElementById("themeToggle").onclick=()=>{
+/* theme menu */
+
+document.getElementById("themeToggle").onclick = ()=>{
 
 themeMenu.style.display =
-themeMenu.style.display==="flex" ? "none":"flex"
+themeMenu.style.display === "flex" ? "none" : "flex";
 
-}
+};
 
-/* APPLY THEME */
+
+/* apply theme */
 
 document.querySelectorAll("[data-theme]").forEach(btn=>{
 
-btn.onclick=()=>{
+btn.onclick = ()=>{
 
-document.body.className=btn.dataset.theme
+document.body.className = btn.dataset.theme;
 
-}
+};
 
-})
+});
