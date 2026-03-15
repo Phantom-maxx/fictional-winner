@@ -1,8 +1,17 @@
+/* ===== GLOBAL RESET ===== */
+
 *{
-box-sizing:border-box;
 margin:0;
 padding:0;
-font-family:Arial;
+box-sizing:border-box;
+font-family:Arial,Helvetica,sans-serif;
+
+transition:
+background 0.25s ease,
+color 0.25s ease,
+border 0.25s ease,
+transform 0.12s ease,
+box-shadow 0.15s ease;
 }
 
 body{
@@ -10,127 +19,212 @@ display:flex;
 justify-content:center;
 align-items:center;
 min-height:100vh;
-transition:.3s;
+background:#121212;
 }
+
+/* ===== CALCULATOR ===== */
 
 .calculator{
-
-width:clamp(320px,90vw,560px);
+width:95%;
+max-width:420px;
+background:#1e1e1e;
 padding:20px;
-border-radius:15px;
-}
-
-.topbar{
-display:flex;
-justify-content:space-between;
-margin-bottom:10px;
-}
-
-.menuArea{
+border-radius:12px;
+box-shadow:0 10px 30px rgba(0,0,0,0.35);
 position:relative;
 }
 
-.menu{
-
-display:none;
-flex-direction:column;
-position:absolute;
-right:0;
-top:35px;
-background:#333;
-padding:10px;
-border-radius:8px;
-gap:6px;
-width:180px;
-z-index:10;
-
+.calculator:hover{
+box-shadow:0 12px 35px rgba(0,0,0,0.45);
 }
 
-.themeMenu{
-right:190px;
-}
+/* ===== DISPLAY ===== */
 
 #display{
-
 width:100%;
-font-size:24px;
-padding:12px;
-margin-bottom:10px;
+padding:14px;
+font-size:22px;
+border:none;
+outline:none;
 border-radius:8px;
-border:2px solid #555;
+background:#2b2b2b;
+color:white;
 overflow-x:auto;
+}
+
+/* ===== RESULT ===== */
+
+#result{
+margin-top:8px;
+font-size:18px;
+color:#aaa;
+animation:resultFade 0.25s ease;
+}
+
+@keyframes resultFade{
+
+0%{
+opacity:0;
+transform:translateY(6px);
+}
+
+100%{
+opacity:1;
+transform:translateY(0);
+}
 
 }
+
+/* ===== BUTTON GRID ===== */
 
 .pad{
-
+margin-top:15px;
 display:grid;
 grid-template-columns:repeat(4,1fr);
-gap:8px;
-
+gap:10px;
 }
+
+/* ===== BUTTON STYLE ===== */
 
 .pad button{
 
-padding:18px;
-font-size:18px;
-border:none;
-border-radius:8px;
 cursor:pointer;
+border:none;
+outline:none;
+font-size:18px;
+border-radius:8px;
+padding:14px;
+background:#2b2b2b;
+color:white;
+
+transition:transform 0.08s ease, box-shadow 0.08s ease;
 
 }
+
+.pad button:hover{
+transform:translateY(-2px);
+box-shadow:0 4px 10px rgba(0,0,0,0.25);
+}
+
+.pad button:active{
+transform:scale(0.94);
+box-shadow:0 2px 5px rgba(0,0,0,0.35);
+}
+
+/* ===== MENU BUTTON ===== */
+
+#menuBtn{
+position:absolute;
+top:10px;
+right:10px;
+cursor:pointer;
+font-size:22px;
+}
+
+/* ===== MENU ===== */
+
+#menu{
+
+position:absolute;
+top:45px;
+right:10px;
+
+background:#2b2b2b;
+
+border-radius:8px;
+
+padding:10px;
+
+display:flex;
+flex-direction:column;
+gap:8px;
+
+opacity:0;
+transform:translateY(-10px);
+pointer-events:none;
+
+transition:all 0.2s ease;
+
+}
+
+#menu.active{
+opacity:1;
+transform:translateY(0);
+pointer-events:auto;
+}
+
+/* ===== HISTORY ===== */
+
+#historyPanel{
+
+margin-top:15px;
+background:#2b2b2b;
+
+border-radius:8px;
+padding:10px;
+
+max-height:0;
+overflow:hidden;
+
+transition:max-height 0.35s ease;
+
+}
+
+#historyPanel.show{
+max-height:400px;
+}
+
+#historyPanel ul{
+list-style:none;
+max-height:300px;
+overflow:auto;
+}
+
+#historyPanel li{
+padding:6px;
+cursor:pointer;
+border-bottom:1px solid #444;
+}
+
+#historyPanel li:hover{
+background:#3b3b3b;
+}
+
+/* ===== SCIENTIFIC PANEL ===== */
 
 .hidden{
 display:none;
 }
 
-#historyPanel{
-margin-top:15px;
-display:none;
-max-height:150px;
-overflow:auto;
-}
+/* ===== THEMES ===== */
 
-/* THEMES */
-
-.theme-dark{
+body.dark{
 background:#121212;
-color:white;
 }
 
-.theme-dark .calculator{
-background:#1f1f1f;
+body.light{
+background:#f4f4f4;
 }
 
-.theme-dark button{
-background:#444;
-color:white;
+body.light .calculator{
+background:white;
 }
 
-.theme-light{
+body.light #display{
 background:#eaeaea;
 color:black;
 }
 
-.theme-light .calculator{
-background:white;
+body.neon{
+background:#050505;
 }
 
-.theme-light button{
-background:#ddd;
+body.neon .calculator{
+background:#0b0b0b;
+box-shadow:0 0 25px #00ffc8;
 }
 
-.theme-neon{
-background:#000814;
-color:#00ffe1;
-}
-
-.theme-neon .calculator{
-background:#001d3d;
-box-shadow:0 0 20px #00ffe1;
-}
-
-.theme-neon button{
-background:#003566;
-color:#00ffe1;
+body.neon button{
+background:#001f1a;
+color:#00ffc8;
 }
