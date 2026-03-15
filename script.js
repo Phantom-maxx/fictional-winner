@@ -4,456 +4,269 @@ Devender
 0.dark.phantom.8@gmail.com
 */
 
-const display = document.getElementById("display");
-const resultBox = document.getElementById("result");
+const display=document.getElementById("display")
+const resultBox=document.getElementById("result")
+const buttons=document.querySelectorAll(".pad button")
 
-const buttons = document.querySelectorAll(".pad button");
-const voiceBtn = document.getElementById("voiceBtn");
+const historyPanel=document.getElementById("historyPanel")
+const historyList=document.getElementById("historyList")
 
-const historyPanel = document.getElementById("historyPanel");
-const historyList = document.getElementById("historyList");
+const menuBtn=document.getElementById("menuBtn")
+const menu=document.getElementById("menu")
 
-const voiceOutputToggle = document.getElementById("voiceOutput");
+const sciPad=document.getElementById("sciPad")
+const basicPad=document.getElementById("basicPad")
 
-const menuBtn = document.getElementById("menuBtn");
-const menu = document.getElementById("menu");
+const voiceBtn=document.getElementById("voiceBtn")
+const voiceOutputToggle=document.getElementById("voiceOutput")
 
-const themeMenu = document.getElementById("themeMenu");
-
-const sciPad = document.getElementById("sciPad");
-const basicPad = document.getElementById("basicPad");
-
-let history = [];
+let history=[]
 
 
-/* =========================
-   INSERT FUNCTION
-========================= */
+function insert(val){
 
-function insert(value){
+let start=display.selectionStart
+let end=display.selectionEnd
+let text=display.value
 
-let start = display.selectionStart ?? display.value.length;
-let end = display.selectionEnd ?? display.value.length;
-let current = display.value;
+const operators=["+","-","*","/","^"]
 
-const operators = ["+","-","*","/","^"];
+if(val=="."){
 
-/* prevent multiple decimals */
+let left=text.substring(0,start)
+let last=left.split(/[+\-*/^()]/).pop()
 
-if(value === "."){
-
-let left = current.substring(0,start);
-let lastNumber = left.split(/[+\-*/^()]/).pop();
-
-if(lastNumber.includes(".")) return;
+if(last.includes(".")) return
 
 }
 
-/* overwrite operators */
+if(operators.includes(val)){
 
-if(operators.includes(value)){
-
-if(start === 0 && value !== "-") return;
-
-let prev = current[start-1];
+let prev=text[start-1]
 
 if(operators.includes(prev)){
 
-display.value =
-current.substring(0,start-1) +
-value +
-current.substring(start);
-
-display.selectionStart = display.selectionEnd = start;
-
-return;
+display.value=text.substring(0,start-1)+val+text.substring(start)
+display.selectionStart=display.selectionEnd=start
+return
 
 }
 
 }
 
-/* normal insert */
+display.value=text.substring(0,start)+val+text.substring(end)
 
-display.value =
-current.substring(0,start) +
-value +
-current.substring(end);
-
-let pos = start + value.length;
-
-display.selectionStart = pos;
-display.selectionEnd = pos;
+display.selectionStart=display.selectionEnd=start+val.length
 
 }
 
-
-/* =========================
-   BACKSPACE
-========================= */
 
 function backspace(){
 
-let start = display.selectionStart;
+let pos=display.selectionStart
 
-if(start > 0){
+if(pos>0){
 
-display.value =
-display.value.slice(0,start-1) +
-display.value.slice(start);
-
-display.selectionStart = display.selectionEnd = start-1;
+display.value=display.value.slice(0,pos-1)+display.value.slice(pos)
+display.selectionStart=display.selectionEnd=pos-1
 
 }
 
 }
 
-
-/* =========================
-   CLEAR
-========================= */
 
 function clearAll(){
 
-display.value = "";
-resultBox.innerText = "Result:";
+display.value=""
+resultBox.innerText="Result:"
 
 }
 
-
-/* =========================
-   CALCULATE
-========================= */
 
 function calculate(){
 
-let exp = display.value;
+let exp=display.value
 
 try{
 
-exp = exp.replace(/\^/g,"**");
-exp = exp.replace(/sin/g,"Math.sin");
-exp = exp.replace(/cos/g,"Math.cos");
-exp = exp.replace(/tan/g,"Math.tan");
-exp = exp.replace(/sqrt/g,"Math.sqrt");
-exp = exp.replace(/log/g,"Math.log10");
-exp = exp.replace(/ln/g,"Math.log");
-exp = exp.replace(/pi/g,"Math.PI");
-exp = exp.replace(/e/g,"Math.E");
+exp=exp.replace(/\^/g,"**")
+exp=exp.replace(/sin/g,"Math.sin")
+exp=exp.replace(/cos/g,"Math.cos")
+exp=exp.replace(/tan/g,"Math.tan")
+exp=exp.replace(/sqrt/g,"Math.sqrt")
+exp=exp.replace(/log/g,"Math.log10")
+exp=exp.replace(/ln/g,"Math.log")
+exp=exp.replace(/pi/g,"Math.PI")
+exp=exp.replace(/e/g,"Math.E")
 
-let result = Function("return "+exp)();
+let result=Function("return "+exp)()
 
-resultBox.innerText = "Result: " + result;
+resultBox.innerText="Result: "+result
 
-addHistory(display.value,result);
+addHistory(display.value,result)
 
-if(voiceOutputToggle.checked){
-speak(result);
-}
+if(voiceOutputToggle.checked) speak(result)
 
 }catch{
 
-resultBox.innerText="Error";
+resultBox.innerText="Error"
 
 }
 
 }
 
-
-/* =========================
-   HISTORY
-========================= */
 
 function addHistory(exp,res){
 
-history.unshift(exp+" = "+res);
+history.unshift(exp+" = "+res)
 
-if(history.length > 30) history.pop();
+if(history.length>30) history.pop()
 
-renderHistory();
+renderHistory()
 
 }
 
 function renderHistory(){
 
-historyList.innerHTML = "";
+historyList.innerHTML=""
 
 history.forEach(item=>{
 
-let li = document.createElement("li");
+let li=document.createElement("li")
+li.textContent=item
 
-li.textContent = item;
+li.onclick=()=>{
+display.value=item.split("=")[0]
+}
 
-li.onclick = ()=>{
+historyList.appendChild(li)
 
-display.value = item.split("=")[0];
-
-};
-
-historyList.appendChild(li);
-
-});
+})
 
 }
 
-
-/* =========================
-   BUTTON INPUT
-========================= */
 
 buttons.forEach(btn=>{
 
 btn.addEventListener("click",()=>{
 
-if(btn.id === "voiceBtn") return;
+let txt=btn.innerText
 
-let txt = btn.innerText;
+if(btn.dataset.op) insert(btn.dataset.op)
 
-if(btn.dataset.op){
+else if(btn.dataset.func) insert(btn.dataset.func)
 
-insert(btn.dataset.op);
+else if(txt==="=") calculate()
 
-}
+else if(txt==="C") clearAll()
 
-else if(btn.dataset.func){
+else insert(txt)
 
-insert(btn.dataset.func);
+})
 
-}
-
-else if(txt === "="){
-
-calculate();
-
-}
-
-else if(txt === "⌫"){
-
-backspace();
-
-}
-
-else if(txt === "C"){
-
-clearAll();
-
-}
-
-else{
-
-insert(txt);
-
-}
-
-});
-
-});
+})
 
 
-/* =========================
-   KEYBOARD SUPPORT
-========================= */
+document.addEventListener("keydown",e=>{
 
-document.addEventListener("keydown",(e)=>{
+let k=e.key
+const ops=["+","-","*","/","^"]
 
-let key = e.key;
-const operators = ["+","-","*","/","^"];
+if(/^[0-9]$/.test(k)){e.preventDefault();insert(k)}
+if(ops.includes(k)){e.preventDefault();insert(k)}
+if(k=="."){e.preventDefault();insert(".")}
+if(k=="("||k==")"){e.preventDefault();insert(k)}
 
-/* numbers */
+if(k==="Enter"){e.preventDefault();calculate()}
+if(k==="Backspace"){e.preventDefault();backspace()}
+if(k==="Escape"){e.preventDefault();clearAll()}
 
-if(/^[0-9]$/.test(key)){
-e.preventDefault();
-insert(key);
-return;
-}
+if(k==="h") document.getElementById("historyToggle").click()
+if(k==="t") document.getElementById("themeToggle").click()
+if(k==="m") menuBtn.click()
 
-/* operators */
-
-if(operators.includes(key)){
-e.preventDefault();
-insert(key);
-return;
-}
-
-/* decimal */
-
-if(key === "."){
-e.preventDefault();
-insert(".");
-return;
-}
-
-/* brackets */
-
-if(key === "(" || key === ")"){
-e.preventDefault();
-insert(key);
-return;
-}
-
-/* calculate */
-
-if(key === "Enter"){
-e.preventDefault();
-calculate();
-return;
-}
-
-/* delete */
-
-if(key === "Backspace"){
-e.preventDefault();
-backspace();
-return;
-}
-
-/* clear */
-
-if(key === "Escape"){
-e.preventDefault();
-clearAll();
-return;
-}
-
-/* history */
-
-if(key === "h" || key === "H"){
-document.getElementById("historyToggle").click();
-}
-
-/* theme */
-
-if(key === "t" || key === "T"){
-document.getElementById("themeToggle").click();
-}
-
-/* menu */
-
-if(key === "m" || key === "M"){
-document.getElementById("menuBtn").click();
-}
-
-});
+})
 
 
-/* =========================
-   VOICE OUTPUT
-========================= */
+function speak(txt){
 
-function speak(text){
+speechSynthesis.cancel()
 
-speechSynthesis.cancel();
+let msg=new SpeechSynthesisUtterance("The result is "+txt)
 
-let msg = new SpeechSynthesisUtterance("The result is " + text);
-
-speechSynthesis.speak(msg);
+speechSynthesis.speak(msg)
 
 }
 
 
-/* =========================
-   VOICE INPUT
-========================= */
-
-let recognition;
+let recognition
 
 if("webkitSpeechRecognition" in window){
 
-recognition = new webkitSpeechRecognition();
+recognition=new webkitSpeechRecognition()
 
-recognition.lang = "en-US";
+recognition.lang="en-US"
 
-recognition.onresult = (event)=>{
+recognition.onresult=e=>{
 
-let speech = event.results[0][0].transcript;
+let speech=e.results[0][0].transcript
 
-insert(speech);
-
-};
+insert(speech)
 
 }
 
-voiceBtn.onclick = ()=>{
-
-if(recognition){
-recognition.start();
 }
 
-};
+voiceBtn.onclick=()=>recognition?.start()
 
 
-/* =========================
-   MENU
-========================= */
+menuBtn.onclick=e=>{
 
-menuBtn.onclick = (e)=>{
+e.stopPropagation()
 
-e.stopPropagation();
-
-menu.classList.toggle("active");
-
-};
-
-
-/* close menus */
-
-document.addEventListener("click",(e)=>{
-
-if(!menu.contains(e.target) && e.target !== menuBtn){
-
-menu.style.display="none";
-themeMenu.style.display="none";
+menu.classList.toggle("active")
 
 }
 
-});
+
+document.addEventListener("click",e=>{
+
+if(!menu.contains(e.target)&&e.target!==menuBtn)
+menu.classList.remove("active")
+
+})
 
 
-/* history toggle */
+document.getElementById("historyToggle").onclick=()=>{
 
-document.getElementById("historyToggle").onclick = ()=>{
+historyPanel.classList.toggle("show")
 
-historyPanel.classList.toggle("show");
-   
-};
+}
 
 
-/* scientific panel */
-
-document.getElementById("scienceToggle").onclick = ()=>{
+document.getElementById("scienceToggle").onclick=()=>{
 
 if(sciPad.classList.contains("hidden")){
 
-sciPad.classList.remove("hidden");
-basicPad.classList.add("hidden");
+sciPad.classList.remove("hidden")
+basicPad.classList.add("hidden")
 
 }else{
 
-basicPad.classList.remove("hidden");
-sciPad.classList.add("hidden");
+basicPad.classList.remove("hidden")
+sciPad.classList.add("hidden")
 
 }
 
-};
+}
 
-
-/* theme menu */
-
-document.getElementById("themeToggle").onclick = ()=>{
-
-themeMenu.style.display =
-themeMenu.style.display === "flex" ? "none" : "flex";
-
-};
-
-
-/* apply theme */
 
 document.querySelectorAll("[data-theme]").forEach(btn=>{
 
-btn.onclick = ()=>{
+btn.onclick=()=>{
 
-document.body.className = btn.dataset.theme;
+document.body.className=btn.dataset.theme
 
-};
+}
 
-});
+})
