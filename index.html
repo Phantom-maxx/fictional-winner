@@ -2,119 +2,101 @@
 <html lang="en">
 
 <head>
-
-<!--
-Developer Signature
-Devender
-0.dark.phantom.8@gmail.com
--->
-
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Voice Scientific Calculator</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Advanced Calculator</title>
 
 <link rel="stylesheet" href="style.css">
-
 </head>
 
-<body class="theme-dark">
+
+<body class="dark">
 
 <div class="calculator">
 
-<div class="topbar">
+<div id="menuBtn">☰</div>
 
-<div class="title">Calculator</div>
-
-<div class="menuArea">
-
-<button id="menuBtn">☰</button>
-
-<div id="menu" class="menu">
+<div id="menu">
 
 <button id="historyToggle">History</button>
 <button id="scienceToggle">Scientific</button>
 <button id="themeToggle">Themes</button>
 
-<label>
-<input type="checkbox" id="voiceOutput">
+<div id="themeMenu">
+<button data-theme="dark">Dark</button>
+<button data-theme="light">Light</button>
+<button data-theme="neon">Neon</button>
+</div>
+
+<label class="voiceSwitch">
 Voice Output
+<input type="checkbox" id="voiceOutput">
 </label>
 
 </div>
 
-<div id="themeMenu" class="menu themeMenu">
 
-<button data-theme="theme-dark">Dark</button>
-<button data-theme="theme-light">Light</button>
-<button data-theme="theme-neon">Neon</button>
-
-</div>
-
-</div>
-
-</div>
-
-<input id="display" autocomplete="off" spellcheck="false" inputmode="none" readonly>
+<input id="display" type="text" placeholder="0">
 
 <div id="result">Result:</div>
 
+
 <div id="basicPad" class="pad">
+
+<button>C</button>
+<button>(</button>
+<button>)</button>
+<button>/</button>
 
 <button>7</button>
 <button>8</button>
 <button>9</button>
-<button data-op="/">÷</button>
+<button>*</button>
 
 <button>4</button>
 <button>5</button>
 <button>6</button>
-<button data-op="*">×</button>
+<button>-</button>
 
 <button>1</button>
 <button>2</button>
 <button>3</button>
-<button data-op="-">−</button>
+<button>+</button>
 
 <button>0</button>
 <button>.</button>
 <button>=</button>
-<button data-op="+">+</button>
-
-<button data-op="^">^</button>
-<button>⌫</button>
-<button>C</button>
 <button id="voiceBtn">🎤</button>
 
 </div>
+
 
 <div id="sciPad" class="pad hidden">
 
 <button data-func="sin(">sin</button>
 <button data-func="cos(">cos</button>
 <button data-func="tan(">tan</button>
-<button data-func="sqrt(">√</button>
+<button data-op="^">^</button>
 
+<button data-func="sqrt(">√</button>
 <button data-func="log(">log</button>
 <button data-func="ln(">ln</button>
 <button>(</button>
-<button>)</button>
 
+<button>)</button>
 <button data-func="pi">π</button>
 <button data-func="e">e</button>
-<button data-op="^">^</button>
 <button>=</button>
 
 </div>
 
+
 <div id="historyPanel">
-
-<h3>History</h3>
 <ul id="historyList"></ul>
-
 </div>
 
 </div>
+
 
 <script src="script.js"></script>
 
