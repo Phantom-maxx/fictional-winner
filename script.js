@@ -126,6 +126,57 @@ speechSynthesis.speak(speech)
 
 }
 
+/* ---------- VOICE INPUT ---------- */
+
+let recognition
+
+if('webkitSpeechRecognition' in window){
+
+recognition = new webkitSpeechRecognition()
+recognition.lang="en-US"
+recognition.continuous=false
+
+recognition.onstart=()=>{
+playDing()
+}
+
+recognition.onend=()=>{
+playDong()
+}
+
+recognition.onresult=(event)=>{
+
+let speech = event.results[0][0].transcript
+
+display.value += speech
+
+}
+
+}
+
+voiceBtn.onclick=()=>{
+
+if(!recognition){
+alert("Speech recognition not supported")
+return
+}
+
+recognition.start()
+
+}
+
+/* ---------- SOUNDS ---------- */
+
+function playDing(){
+let audio=new Audio("https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg")
+audio.play()
+}
+
+function playDong(){
+let audio=new Audio("https://actions.google.com/sounds/v1/cartoon/wood_plank_flicks.ogg")
+audio.play()
+}
+
 /* ========= BUTTON INPUT ========= */
 
 buttons.forEach(btn=>{
