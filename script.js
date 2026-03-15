@@ -31,14 +31,58 @@ function insert(value){
 
 let start = display.selectionStart
 let end = display.selectionEnd
+let current = display.value
+
+/* DECIMAL PROTECTION */
+
+if(value === "."){
+
+let left = current.substring(0,start)
+let lastNumber = left.split(/[+\-*/^()]/).pop()
+
+if(lastNumber.includes(".")){
+return
+}
+
+}
+
+/* OPERATOR HANDLING */
+
+const operators = ["+","-","*","/","^"]
+
+if(operators.includes(value)){
+
+if(start === 0 && value !== "-"){
+return
+}
+
+let prevChar = current[start-1]
+
+if(operators.includes(prevChar)){
 
 display.value =
-display.value.substring(0,start) +
+current.substring(0,start-1) +
 value +
-display.value.substring(end)
+current.substring(start)
 
-display.selectionStart = display.selectionEnd = start + value.length
+display.selectionStart =
+display.selectionEnd = start
 
+return
+
+}
+
+/* NORMAL INSERT */
+
+display.value =
+current.substring(0,start) +
+value +
+current.substring(end)
+
+display.selectionStart =
+display.selectionEnd = start + value.length
+
+}
 }
 
 /* BACKSPACE */
