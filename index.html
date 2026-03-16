@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -13,7 +12,6 @@
 <button id="menuBtn">☰</button>
 
 <div id="menu">
-
 <button id="historyToggle">History</button>
 <button id="scienceToggle">Scientific</button>
 <button id="themeToggle">Themes</button>
@@ -24,11 +22,10 @@
 <button data-theme="neon">Neon</button>
 </div>
 
-<label class="voiceLabel">
+<label>
 Voice Output
 <input type="checkbox" id="voiceOutput">
 </label>
-
 </div>
 
 
@@ -38,12 +35,12 @@ Voice Output
 
 <input id="display" placeholder="Enter your calculation">
 
-<div id="basicPad" class="pad">
+<div class="pad">
 
 <button>7</button>
 <button>8</button>
 <button>9</button>
-<button>⌫</button>
+<button id="backspace">⌫</button>
 
 <button>4</button>
 <button>5</button>
@@ -72,19 +69,14 @@ Voice Output
 
 </div>
 
-
 <div class="bottomBar">
 <button id="clearBtn">Clear</button>
 <button id="voiceBtn">🎤 Speak</button>
 </div>
 
-
 <div id="historyPanel">
-
 <button id="clearHistory">Clear History</button>
-
 <ul id="historyList"></ul>
-
 </div>
 
 </div>
