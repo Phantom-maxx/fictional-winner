@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,9 +10,7 @@
 
 <body class="dark">
 
-<div class="calculator">
-
-<div id="menuBtn">☰</div>
+<button id="menuBtn">☰</button>
 
 <div id="menu">
 
@@ -25,70 +24,67 @@
 <button data-theme="neon">Neon</button>
 </div>
 
-<label class="voiceToggle">
+<label class="voiceLabel">
 Voice Output
 <input type="checkbox" id="voiceOutput">
 </label>
 
 </div>
 
-<input id="display" type="text">
+
+<div class="calculator">
 
 <div id="result">Result:</div>
 
+<input id="display" placeholder="Enter your calculation">
 
 <div id="basicPad" class="pad">
-
-<button>C</button>
-<button>(</button>
-<button>)</button>
-<button>/</button>
 
 <button>7</button>
 <button>8</button>
 <button>9</button>
-<button>*</button>
+<button>⌫</button>
 
 <button>4</button>
 <button>5</button>
 <button>6</button>
-<button>-</button>
+<button>/</button>
 
 <button>1</button>
 <button>2</button>
 <button>3</button>
-<button>+</button>
+<button>*</button>
 
 <button>0</button>
 <button>.</button>
 <button>=</button>
-<button id="voiceBtn">🎤</button>
+<button>-</button>
+
+<button>(</button>
+<button>)</button>
+<button>%</button>
+<button>+</button>
+
+<button>^</button>
+<button>π</button>
+<button>e</button>
+<button>√</button>
 
 </div>
 
 
-<div id="sciPad" class="pad hidden">
-
-<button data-func="sin(">sin</button>
-<button data-func="cos(">cos</button>
-<button data-func="tan(">tan</button>
-<button data-op="^">^</button>
-
-<button data-func="sqrt(">√</button>
-<button data-func="log(">log</button>
-<button data-func="ln(">ln</button>
-<button>(</button>
-
-<button>)</button>
-<button data-func="pi">π</button>
-<button data-func="e">e</button>
-<button>=</button>
-
+<div class="bottomBar">
+<button id="clearBtn">Clear</button>
+<button id="voiceBtn">🎤 Speak</button>
 </div>
 
 
 <div id="historyPanel">
+
+<button id="clearHistory">Clear History</button>
+
 <ul id="historyList"></ul>
+
 </div>
 
 </div>
