@@ -3,7 +3,6 @@ margin:0;
 padding:0;
 box-sizing:border-box;
 font-family:Arial;
-transition:.25s;
 }
 
 body{
@@ -15,7 +14,7 @@ background:#141414;
 }
 
 .calculator{
-background:#f2f2f2;
+background:#f3f3f3;
 padding:25px;
 border-radius:15px;
 width:320px;
@@ -25,8 +24,8 @@ box-shadow:0 10px 30px rgba(0,0,0,.2);
 #display{
 width:100%;
 padding:10px;
-margin-top:8px;
 font-size:18px;
+margin-top:8px;
 }
 
 #result{
@@ -39,7 +38,6 @@ margin-bottom:10px;
 display:grid;
 grid-template-columns:repeat(4,1fr);
 gap:10px;
-margin-top:10px;
 }
 
 .pad button{
@@ -47,7 +45,7 @@ padding:15px;
 font-size:18px;
 border:none;
 border-radius:10px;
-background:linear-gradient(145deg,#7c76ff,#5d57ff);
+background:linear-gradient(145deg,#7a74ff,#5b55ff);
 color:white;
 cursor:pointer;
 }
@@ -56,31 +54,27 @@ cursor:pointer;
 transform:translateY(-2px);
 }
 
-.pad button:active{
-transform:scale(.95);
-}
-
 .bottomBar{
 display:flex;
 gap:10px;
-margin-top:12px;
+margin-top:10px;
 }
 
 #clearBtn{
 flex:1;
 padding:12px;
-background:#ff5c6c;
-border:none;
+background:#ff5a6b;
 color:white;
+border:none;
 border-radius:8px;
 }
 
 #voiceBtn{
 flex:2;
 padding:12px;
-background:#6b65ff;
-border:none;
+background:#6a64ff;
 color:white;
+border:none;
 border-radius:8px;
 }
 
@@ -88,7 +82,7 @@ border-radius:8px;
 position:fixed;
 top:20px;
 right:20px;
-background:#6b65ff;
+background:#6a64ff;
 color:white;
 border:none;
 padding:10px;
@@ -134,7 +128,7 @@ overflow:auto;
 }
 
 #historyList li{
-padding:5px;
+padding:6px;
 border-bottom:1px solid #ddd;
 cursor:pointer;
 }
@@ -150,28 +144,4 @@ margin-bottom:5px;
 
 .hidden{
 display:none;
-}
-
-/* THEMES */
-
-body.dark{
-background:#121212;
-}
-
-body.dark .calculator{
-background:#1f1f1f;
-color:white;
-}
-
-body.light{
-background:#f3f3f3;
-}
-
-body.neon{
-background:black;
-}
-
-body.neon .pad button{
-background:#00ffd5;
-color:black;
 }
