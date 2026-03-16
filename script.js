@@ -16,30 +16,41 @@ let justCalculated=false
 
 function insert(val){
 
-if(justCalculated && /^[0-9]$/.test(val)){
+if(justCalculated && /[0-9]/.test(val)){
 display.value=""
 }
 
 justCalculated=false
 
-let start=display.selectionStart
-let end=display.selectionEnd
 let text=display.value
 
-display.value=text.slice(0,start)+val+text.slice(end)
+let lastChar=text.slice(-1)
 
-display.selectionStart=display.selectionEnd=start+val.length
+
+if(val==="." ){
+
+let parts=text.split(/[+\-*/]/)
+let last=parts[parts.length-1]
+
+if(last.includes(".")) return
+}
+
+
+const ops=["+","-","*","/","^"]
+
+if(ops.includes(val) && ops.includes(lastChar)){
+display.value=text.slice(0,-1)+val
+return
+}
+
+display.value+=val
 }
 
 
 function backspace(){
 
-let pos=display.selectionStart
+display.value=display.value.slice(0,-1)
 
-display.value=
-display.value.slice(0,pos-1)+display.value.slice(pos)
-
-display.selectionStart=display.selectionEnd=pos-1
 }
 
 
@@ -57,7 +68,7 @@ try{
 let exp=display.value
 
 exp=exp.replace(/\^/g,"**")
-exp=exp.replace(/sqrt/g,"Math.sqrt")
+exp=exp.replace(/√/g,"Math.sqrt")
 exp=exp.replace(/π/g,"Math.PI")
 exp=exp.replace(/e/g,"Math.E")
 
@@ -78,8 +89,11 @@ new SpeechSynthesisUtterance("The result is "+result)
 }
 
 }catch{
+
 resultBox.innerText="Error"
+
 }
+
 }
 
 
@@ -98,6 +112,7 @@ li.onclick=()=>display.value=item.split("=")[0]
 historyList.appendChild(li)
 
 })
+
 }
 
 
@@ -111,7 +126,7 @@ if(txt==="=") calculate()
 
 else if(txt==="⌫") backspace()
 
-else if(txt==="√") insert("sqrt(")
+else if(txt==="√") insert("√(")
 
 else insert(txt)
 
@@ -142,23 +157,17 @@ document.onclick=()=>menu.classList.remove("active")
 
 
 document.getElementById("historyToggle").onclick=()=>{
-
 historyPanel.classList.toggle("show")
-
 }
 
 
 document.getElementById("themeToggle").onclick=()=>{
-
 document.getElementById("themeMenu").classList.toggle("hidden")
-
 }
 
 
 document.querySelectorAll("[data-theme]").forEach(btn=>{
-
 btn.onclick=()=>document.body.className=btn.dataset.theme
-
 })
 
 
@@ -187,9 +196,7 @@ if("webkitSpeechRecognition" in window){
 let recognition=new webkitSpeechRecognition()
 
 recognition.onresult=e=>{
-
 insert(e.results[0][0].transcript)
-
 }
 
 voiceBtn.onclick=()=>recognition.start()
