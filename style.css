@@ -145,3 +145,45 @@ margin-bottom:5px;
 .hidden{
 display:none;
 }
+
+
+/* THEMES */
+
+body.dark{
+background:#141414;
+}
+
+body.dark .calculator{
+background:#1f1f1f;
+color:white;
+}
+
+body.light{
+background:#f3f3f3;
+}
+
+body.neon{
+background:black;
+}
+
+body.neon .calculator{
+background:#050505;
+border:2px solid #00ffe5;
+box-shadow:0 0 25px #00ffe5;
+}
+
+body.neon .pad button{
+background:#00ffe5;
+color:black;
+box-shadow:0 0 10px #00ffe5;
+}
+
+body.neon #voiceBtn{
+background:#ff00ff;
+box-shadow:0 0 12px #ff00ff;
+}
+
+body.neon #clearBtn{
+background:#ff0044;
+box-shadow:0 0 12px #ff0044;
+}
