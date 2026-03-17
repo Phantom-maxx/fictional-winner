@@ -1,182 +1,188 @@
-const display=document.getElementById("display")
-const resultBox=document.getElementById("result")
+const display = document.getElementById("display");
+const resultBox = document.getElementById("result");
 
-const historyList=document.getElementById("historyList")
-const historyPanel=document.getElementById("historyPanel")
+const pad = document.getElementById("pad");
+const sciPanel = document.getElementById("scientificPanel");
 
-const menu=document.getElementById("menu")
-const menuBtn=document.getElementById("menuBtn")
+const historyList = document.getElementById("historyList");
+const historyBox = document.getElementById("historyBox");
 
-const voiceBtn=document.getElementById("voiceBtn")
-const voiceOutput=document.getElementById("voiceOutput")
+const menu = document.getElementById("menu");
+const menuBtn = document.getElementById("menuBtn");
 
-let history=[]
-let justCalculated=false
+let history = [];
+let justCalculated = false;
 
+/* ================= BUTTON LAYOUT ================= */
+
+const buttons = [
+"7","8","9","⌫",
+"4","5","6","/",
+"1","2","3","*",
+"0",".","(",")",
+"%","+","-","^"
+];
+
+const sciButtons = ["π","e","√","log","sin","cos","tan"];
+
+buttons.forEach(b=>{
+let btn=document.createElement("button");
+btn.textContent=b;
+pad.appendChild(btn);
+});
+
+sciButtons.forEach(b=>{
+let btn=document.createElement("button");
+btn.textContent=b;
+sciPanel.appendChild(btn);
+});
+
+/* ================= INPUT ================= */
 
 function insert(val){
 
-if(justCalculated && /[0-9]/.test(val)){
-display.value=""
+if(justCalculated && /[0-9.]/.test(val)){
+display.value="";
 }
-
-justCalculated=false
-
-let text=display.value
-let last=text.slice(-1)
+justCalculated=false;
 
 if(val==="." ){
-let parts=text.split(/[+\-*/]/)
-let lastNum=parts[parts.length-1]
-if(lastNum.includes(".")) return
+let parts=display.value.split(/[+\-*/%^]/);
+if(parts.at(-1).includes(".")) return;
 }
 
-const ops=["+","-","*","/","^"]
-
-if(ops.includes(val) && ops.includes(last)){
-display.value=text.slice(0,-1)+val
-return
+if(/[+\-*/%^]/.test(val) && /[+\-*/%^]$/.test(display.value)){
+display.value=display.value.slice(0,-1)+val;
+return;
 }
 
-display.value+=val
+display.value+=val;
 }
 
+/* ================= CALC ================= */
 
-function backspace(){
-display.value=display.value.slice(0,-1)
-}
-
-function clearAll(){
-display.value=""
-resultBox.innerText="Result:"
-}
-
-
-function calculate(){
+function calc(){
 
 try{
-
 let exp=display.value
+.replace(/\^/g,"**")
+.replace(/π/g,"Math.PI")
+.replace(/e/g,"Math.E")
+.replace(/√/g,"Math.sqrt");
 
-exp=exp.replace(/\^/g,"**")
-exp=exp.replace(/√/g,"Math.sqrt")
-exp=exp.replace(/π/g,"Math.PI")
-exp=exp.replace(/e/g,"Math.E")
+let res=Function("return "+exp)();
+resultBox.innerText="Result: "+res;
 
-let result=Function("return "+exp)()
+history.unshift(display.value+"="+res);
+renderHistory();
 
-resultBox.innerText="Result: "+result
-
-history.unshift(display.value+" = "+result)
-renderHistory()
-
-justCalculated=true
-
-if(voiceOutput.checked){
-speechSynthesis.speak(new SpeechSynthesisUtterance(result))
-}
+justCalculated=true;
 
 }catch{
-resultBox.innerText="Error"
+resultBox.innerText="Error";
+}
 }
 
-}
-
+/* ================= HISTORY ================= */
 
 function renderHistory(){
-
-historyList.innerHTML=""
-
-history.forEach(item=>{
-let li=document.createElement("li")
-li.textContent=item
-li.onclick=()=>display.value=item.split("=")[0]
-historyList.appendChild(li)
-})
-
+historyList.innerHTML="";
+history.forEach(h=>{
+let li=document.createElement("li");
+li.textContent=h;
+li.onclick=()=>display.value=h.split("=")[0];
+historyList.appendChild(li);
+});
 }
 
+/* ================= EVENTS ================= */
 
-/* BUTTONS */
+pad.addEventListener("click",e=>{
+if(e.target.tagName!=="BUTTON")return;
 
-document.querySelectorAll(".pad button").forEach(btn=>{
-btn.onclick=()=>{
-let t=btn.innerText
-if(t==="=") calculate()
-else if(t==="⌫") backspace()
-else if(t==="√") insert("√(")
-else insert(t)
-}
-})
+let t=e.target.textContent;
 
-document.getElementById("clearBtn").onclick=clearAll
+if(t==="⌫") display.value=display.value.slice(0,-1);
+else insert(t);
+});
+
+sciPanel.addEventListener("click",e=>{
+if(e.target.tagName!=="BUTTON")return;
+insert(e.target.textContent+"(");
+});
+
+document.getElementById("equals").onclick=calc;
+document.getElementById("clear").onclick=()=>display.value="";
+
 document.getElementById("clearHistory").onclick=()=>{
-history=[]
-renderHistory()
-}
+history=[];
+renderHistory();
+};
 
+/* ================= MENU ================= */
 
-/* MENU */
+menuBtn.onclick=(e)=>{
+e.stopPropagation();
+menu.classList.toggle("active");
+};
 
-menuBtn.onclick=e=>{
-e.stopPropagation()
-menu.classList.toggle("active")
-}
-
-menu.onclick=e=>e.stopPropagation()
-document.onclick=()=>menu.classList.remove("active")
+document.onclick=()=>menu.classList.remove("active");
+menu.onclick=e=>e.stopPropagation();
 
 document.getElementById("historyToggle").onclick=()=>{
-historyPanel.classList.toggle("show")
-}
+historyBox.classList.toggle("show");
+};
 
 document.getElementById("scienceToggle").onclick=()=>{
-document.querySelectorAll(".scientific").forEach(b=>{
-b.classList.toggle("hidden")
-})
-}
+sciPanel.classList.toggle("hidden");
+};
 
 document.getElementById("themeToggle").onclick=()=>{
-document.getElementById("themeMenu").classList.toggle("hidden")
-}
+document.getElementById("themeMenu").classList.toggle("hidden");
+};
 
 document.querySelectorAll("[data-theme]").forEach(btn=>{
-btn.onclick=()=>{
-document.body.className=btn.dataset.theme
-}
-})
+btn.onclick=()=>document.body.className=btn.dataset.theme;
+});
 
-
-/* KEYBOARD */
+/* ================= KEYBOARD ================= */
 
 document.addEventListener("keydown",e=>{
-let k=e.key
-if(/[0-9]/.test(k)) insert(k)
-else if(["+","-","*","/","^",".","(",")"].includes(k)) insert(k)
-else if(k==="Enter") calculate()
-else if(k==="Backspace"){e.preventDefault();backspace()}
-else if(k==="Escape") clearAll()
-})
 
+if(e.repeat) return;
 
-/* SPEECH */
+let k=e.key;
 
-let recognition
+if(/[0-9]/.test(k)) insert(k);
+else if(["+","-","*","/","%","^",".","(",")"].includes(k)) insert(k);
 
-if("webkitSpeechRecognition" in window){
-recognition=new webkitSpeechRecognition()
-recognition.lang="en-US"
-recognition.continuous=false
+else if(k==="Enter") calc();
+else if(k==="Backspace") display.value=display.value.slice(0,-1);
+else if(k==="Escape") display.value="";
+});
 
-recognition.onresult=e=>{
-insert(e.results[0][0].transcript)
+/* ================= VOICE ================= */
+
+let rec;
+
+if(window.SpeechRecognition || window.webkitSpeechRecognition){
+
+const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+rec = new SR();
+
+rec.onresult = e=>{
+let t=e.results[0][0].transcript
+.replace(/plus/gi,"+")
+.replace(/minus/gi,"-")
+.replace(/into|multiply/gi,"*")
+.replace(/divide/gi,"/");
+
+insert(t);
+};
+
 }
-}
 
-voiceBtn.onclick=()=>{
-if(recognition){
-recognition.start()
-}else{
-alert("Speech recognition not supported in this browser")
-}
-}
+document.getElementById("voice").onclick=()=>{
+if(rec) rec.start();
+else alert("Speech not supported");
+};
