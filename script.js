@@ -23,17 +23,17 @@ display.value=""
 justCalculated=false
 
 let text=display.value
-let lastChar=text.slice(-1)
+let last=text.slice(-1)
 
 if(val==="." ){
 let parts=text.split(/[+\-*/]/)
-let last=parts[parts.length-1]
-if(last.includes(".")) return
+let lastNum=parts[parts.length-1]
+if(lastNum.includes(".")) return
 }
 
 const ops=["+","-","*","/","^"]
 
-if(ops.includes(val) && ops.includes(lastChar)){
+if(ops.includes(val) && ops.includes(last)){
 display.value=text.slice(0,-1)+val
 return
 }
@@ -68,21 +68,16 @@ let result=Function("return "+exp)()
 resultBox.innerText="Result: "+result
 
 history.unshift(display.value+" = "+result)
-
 renderHistory()
 
 justCalculated=true
 
 if(voiceOutput.checked){
-speechSynthesis.speak(
-new SpeechSynthesisUtterance("The result is "+result)
-)
+speechSynthesis.speak(new SpeechSynthesisUtterance(result))
 }
 
 }catch{
-
 resultBox.innerText="Error"
-
 }
 
 }
@@ -93,40 +88,28 @@ function renderHistory(){
 historyList.innerHTML=""
 
 history.forEach(item=>{
-
 let li=document.createElement("li")
-
 li.textContent=item
-
 li.onclick=()=>display.value=item.split("=")[0]
-
 historyList.appendChild(li)
-
 })
 
 }
 
 
-/* BUTTON INPUT */
+/* BUTTONS */
 
 document.querySelectorAll(".pad button").forEach(btn=>{
-
-btn.addEventListener("click",()=>{
-
-let txt=btn.innerText
-
-if(txt==="=") calculate()
-else if(txt==="⌫") backspace()
-else if(txt==="√") insert("√(")
-else insert(txt)
-
+btn.onclick=()=>{
+let t=btn.innerText
+if(t==="=") calculate()
+else if(t==="⌫") backspace()
+else if(t==="√") insert("√(")
+else insert(t)
+}
 })
-
-})
-
 
 document.getElementById("clearBtn").onclick=clearAll
-
 document.getElementById("clearHistory").onclick=()=>{
 history=[]
 renderHistory()
@@ -141,73 +124,59 @@ menu.classList.toggle("active")
 }
 
 menu.onclick=e=>e.stopPropagation()
-
 document.onclick=()=>menu.classList.remove("active")
-
 
 document.getElementById("historyToggle").onclick=()=>{
 historyPanel.classList.toggle("show")
 }
 
-
-/* SCIENTIFIC BUTTON FIX */
-
 document.getElementById("scienceToggle").onclick=()=>{
-
-document.querySelectorAll(".scientific").forEach(btn=>{
-btn.classList.toggle("hidden")
+document.querySelectorAll(".scientific").forEach(b=>{
+b.classList.toggle("hidden")
 })
-
 }
-
-
-/* THEMES */
 
 document.getElementById("themeToggle").onclick=()=>{
 document.getElementById("themeMenu").classList.toggle("hidden")
 }
 
 document.querySelectorAll("[data-theme]").forEach(btn=>{
-btn.onclick=()=>document.body.className=btn.dataset.theme
+btn.onclick=()=>{
+document.body.className=btn.dataset.theme
+}
 })
 
 
-/* KEYBOARD INPUT */
+/* KEYBOARD */
 
 document.addEventListener("keydown",e=>{
-
 let k=e.key
-
 if(/[0-9]/.test(k)) insert(k)
-
 else if(["+","-","*","/","^",".","(",")"].includes(k)) insert(k)
-
 else if(k==="Enter") calculate()
-
-else if(k==="Backspace"){
-e.preventDefault()
-backspace()
-}
-
+else if(k==="Backspace"){e.preventDefault();backspace()}
 else if(k==="Escape") clearAll()
-
 })
 
 
-/* SPEAK BUTTON FIX */
+/* SPEECH */
+
+let recognition
 
 if("webkitSpeechRecognition" in window){
-
-let recognition=new webkitSpeechRecognition()
+recognition=new webkitSpeechRecognition()
 recognition.lang="en-US"
+recognition.continuous=false
 
 recognition.onresult=e=>{
-let speech=e.results[0][0].transcript
-insert(speech)
+insert(e.results[0][0].transcript)
+}
 }
 
 voiceBtn.onclick=()=>{
+if(recognition){
 recognition.start()
+}else{
+alert("Speech recognition not supported in this browser")
 }
-
 }
