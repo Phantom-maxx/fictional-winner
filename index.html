@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Advanced Calculator</title>
+<title>Calculator</title>
 <link rel="stylesheet" href="style.css">
 </head>
 
@@ -31,48 +31,20 @@ Voice Output
 <div class="calculator">
 
 <div id="result">Result:</div>
-<input id="display" placeholder="Enter your calculation">
 
-<div class="pad">
+<input id="display" inputmode="none" placeholder="Enter expression">
 
-<button>7</button>
-<button>8</button>
-<button>9</button>
-<button>⌫</button>
+<div class="pad" id="pad"></div>
 
-<button>4</button>
-<button>5</button>
-<button>6</button>
-<button>/</button>
+<div id="scientificPanel" class="hidden"></div>
 
-<button>1</button>
-<button>2</button>
-<button>3</button>
-<button>*</button>
-
-<button>0</button>
-<button>.</button>
-<button>=</button>
-<button>-</button>
-
-<button>(</button>
-<button>)</button>
-<button>%</button>
-<button>+</button>
-
-<button class="scientific hidden">^</button>
-<button class="scientific hidden">π</button>
-<button class="scientific hidden">e</button>
-<button class="scientific hidden">√</button>
-
+<div class="bottom">
+<button id="clear">C</button>
+<button id="voice">🎤</button>
+<button id="equals">=</button>
 </div>
 
-<div class="bottomBar">
-<button id="clearBtn">Clear</button>
-<button id="voiceBtn">🎤 Speak</button>
-</div>
-
-<div id="historyPanel">
+<div id="historyBox">
 <button id="clearHistory">Clear History</button>
 <ul id="historyList"></ul>
 </div>
@@ -80,6 +52,5 @@ Voice Output
 </div>
 
 <script src="script.js"></script>
-
 </body>
 </html>
