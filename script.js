@@ -10,11 +10,12 @@ const historyBox = document.getElementById("historyBox");
 const menu = document.getElementById("menu");
 const menuBtn = document.getElementById("menuBtn");
 
+const voiceToggle = document.getElementById("voiceOutput");
+
 let history = [];
 let justCalculated = false;
 
-/* ================= BUTTON LAYOUT ================= */
-
+/* BUTTONS */
 const buttons = [
 "7","8","9","⌫",
 "4","5","6","/",
@@ -37,8 +38,7 @@ btn.textContent=b;
 sciPanel.appendChild(btn);
 });
 
-/* ================= INPUT ================= */
-
+/* INPUT */
 function insert(val){
 
 if(justCalculated && /[0-9.]/.test(val)){
@@ -57,12 +57,11 @@ return;
 }
 
 display.value+=val;
+display.scrollLeft = display.scrollWidth;
 }
 
-/* ================= CALC ================= */
-
+/* CALC */
 function calc(){
-
 try{
 let exp=display.value
 .replace(/\^/g,"**")
@@ -78,13 +77,17 @@ renderHistory();
 
 justCalculated=true;
 
+if(voiceToggle.checked){
+speechSynthesis.cancel();
+speechSynthesis.speak(new SpeechSynthesisUtterance(res));
+}
+
 }catch{
 resultBox.innerText="Error";
 }
 }
 
-/* ================= HISTORY ================= */
-
+/* HISTORY */
 function renderHistory(){
 historyList.innerHTML="";
 history.forEach(h=>{
@@ -95,13 +98,10 @@ historyList.appendChild(li);
 });
 }
 
-/* ================= EVENTS ================= */
-
+/* EVENTS */
 pad.addEventListener("click",e=>{
 if(e.target.tagName!=="BUTTON")return;
-
 let t=e.target.textContent;
-
 if(t==="⌫") display.value=display.value.slice(0,-1);
 else insert(t);
 });
@@ -119,8 +119,7 @@ history=[];
 renderHistory();
 };
 
-/* ================= MENU ================= */
-
+/* MENU */
 menuBtn.onclick=(e)=>{
 e.stopPropagation();
 menu.classList.toggle("active");
@@ -145,10 +144,8 @@ document.querySelectorAll("[data-theme]").forEach(btn=>{
 btn.onclick=()=>document.body.className=btn.dataset.theme;
 });
 
-/* ================= KEYBOARD ================= */
-
+/* KEYBOARD */
 document.addEventListener("keydown",e=>{
-
 if(e.repeat) return;
 
 let k=e.key;
@@ -161,12 +158,10 @@ else if(k==="Backspace") display.value=display.value.slice(0,-1);
 else if(k==="Escape") display.value="";
 });
 
-/* ================= VOICE ================= */
-
+/* VOICE */
 let rec;
 
 if(window.SpeechRecognition || window.webkitSpeechRecognition){
-
 const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
 rec = new SR();
 
@@ -179,10 +174,23 @@ let t=e.results[0][0].transcript
 
 insert(t);
 };
-
 }
 
 document.getElementById("voice").onclick=()=>{
 if(rec) rec.start();
 else alert("Speech not supported");
 };
+
+/* HAPTIC + BUTTON FEEDBACK */
+if(navigator.vibrate){
+document.querySelectorAll("button").forEach(btn=>{
+btn.addEventListener("click",()=>navigator.vibrate(10));
+});
+}
+
+document.querySelectorAll("button").forEach(btn=>{
+btn.addEventListener("click",()=>{
+btn.style.transform="scale(0.9)";
+setTimeout(()=>btn.style.transform="",100);
+});
+});
