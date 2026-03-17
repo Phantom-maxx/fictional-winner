@@ -23,18 +23,13 @@ display.value=""
 justCalculated=false
 
 let text=display.value
-
 let lastChar=text.slice(-1)
 
-
 if(val==="." ){
-
 let parts=text.split(/[+\-*/]/)
 let last=parts[parts.length-1]
-
 if(last.includes(".")) return
 }
-
 
 const ops=["+","-","*","/","^"]
 
@@ -48,14 +43,10 @@ display.value+=val
 
 
 function backspace(){
-
 display.value=display.value.slice(0,-1)
-
 }
 
-
 function clearAll(){
-
 display.value=""
 resultBox.innerText="Result:"
 }
@@ -116,6 +107,8 @@ historyList.appendChild(li)
 }
 
 
+/* BUTTON INPUT */
+
 document.querySelectorAll(".pad button").forEach(btn=>{
 
 btn.addEventListener("click",()=>{
@@ -123,11 +116,8 @@ btn.addEventListener("click",()=>{
 let txt=btn.innerText
 
 if(txt==="=") calculate()
-
 else if(txt==="⌫") backspace()
-
 else if(txt==="√") insert("√(")
-
 else insert(txt)
 
 })
@@ -137,14 +127,13 @@ else insert(txt)
 
 document.getElementById("clearBtn").onclick=clearAll
 
-
 document.getElementById("clearHistory").onclick=()=>{
-
 history=[]
 renderHistory()
-
 }
 
+
+/* MENU */
 
 menuBtn.onclick=e=>{
 e.stopPropagation()
@@ -161,15 +150,29 @@ historyPanel.classList.toggle("show")
 }
 
 
+/* SCIENTIFIC BUTTON FIX */
+
+document.getElementById("scienceToggle").onclick=()=>{
+
+document.querySelectorAll(".scientific").forEach(btn=>{
+btn.classList.toggle("hidden")
+})
+
+}
+
+
+/* THEMES */
+
 document.getElementById("themeToggle").onclick=()=>{
 document.getElementById("themeMenu").classList.toggle("hidden")
 }
-
 
 document.querySelectorAll("[data-theme]").forEach(btn=>{
 btn.onclick=()=>document.body.className=btn.dataset.theme
 })
 
+
+/* KEYBOARD INPUT */
 
 document.addEventListener("keydown",e=>{
 
@@ -191,14 +194,20 @@ else if(k==="Escape") clearAll()
 })
 
 
+/* SPEAK BUTTON FIX */
+
 if("webkitSpeechRecognition" in window){
 
 let recognition=new webkitSpeechRecognition()
+recognition.lang="en-US"
 
 recognition.onresult=e=>{
-insert(e.results[0][0].transcript)
+let speech=e.results[0][0].transcript
+insert(speech)
 }
 
-voiceBtn.onclick=()=>recognition.start()
+voiceBtn.onclick=()=>{
+recognition.start()
+}
 
 }
