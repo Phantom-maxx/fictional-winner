@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Advanced Calculator</title>
+<title>Calculator</title>
 <link rel="stylesheet" href="style.css">
 </head>
 
@@ -12,31 +12,24 @@
 <button id="menuBtn">☰</button>
 
 <div id="menu">
-<button id="historyToggle">History</button>
-<button id="scienceToggle">Scientific</button>
-<button id="themeToggle">Themes</button>
+<button id="toggleSci">Scientific</button>
+<button id="toggleHistory">History</button>
+<button id="toggleTheme">Themes</button>
 
-<div id="themeMenu" class="hidden">
+<div id="themeOptions" class="hidden">
 <button data-theme="dark">Dark</button>
 <button data-theme="light">Light</button>
 <button data-theme="neon">Neon</button>
 </div>
-
-<label>
-Voice Output
-<input type="checkbox" id="voiceOutput">
-</label>
 </div>
 
 <div class="calculator">
 
-<div id="result">Result:</div>
+<div id="result">Result: </div>
+<input id="display" placeholder="0" readonly>
 
-<input id="display" inputmode="none" placeholder="Enter expression">
-
-<div class="pad" id="pad"></div>
-
-<div id="scientificPanel" class="hidden"></div>
+<div id="keypad"></div>
+<div id="scientific" class="hidden"></div>
 
 <div class="bottom">
 <button id="clear">C</button>
@@ -44,10 +37,7 @@ Voice Output
 <button id="equals">=</button>
 </div>
 
-<div id="historyBox">
-<button id="clearHistory">Clear History</button>
-<ul id="historyList"></ul>
-</div>
+<div id="history" class="hidden"></div>
 
 </div>
 
