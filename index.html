@@ -3,42 +3,53 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Calculator</title>
+<title>Smart Calculator</title>
 <link rel="stylesheet" href="style.css">
 </head>
 
 <body class="dark">
 
+<div class="app">
+
+<!-- MENU -->
+<div class="menu-container">
 <button id="menuBtn">☰</button>
 
 <div id="menu">
 <button id="toggleSci">Scientific</button>
 <button id="toggleHistory">History</button>
+<button id="toggleVoice">Voice Output</button>
 <button id="toggleTheme">Themes</button>
 
-<div id="themeOptions" class="hidden">
+<div id="themeBox" class="hidden">
 <button data-theme="dark">Dark</button>
 <button data-theme="light">Light</button>
 <button data-theme="neon">Neon</button>
 </div>
 </div>
+</div>
 
+<!-- CALCULATOR -->
 <div class="calculator">
 
-<div id="result">Result: </div>
-<input id="display" placeholder="0" readonly>
+<div id="result">Result:</div>
+
+<input id="display" readonly>
 
 <div id="keypad"></div>
+
 <div id="scientific" class="hidden"></div>
 
-<div class="bottom">
+<div class="controls">
 <button id="clear">C</button>
+<button id="backspace">⌫</button>
 <button id="voice">🎤</button>
 <button id="equals">=</button>
 </div>
 
-<div id="history" class="hidden"></div>
+<div id="historyBox" class="hidden"></div>
 
+</div>
 </div>
 
 <script src="script.js"></script>
