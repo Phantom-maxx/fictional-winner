@@ -3,7 +3,7 @@ margin:0;
 padding:0;
 box-sizing:border-box;
 font-family:'Segoe UI',sans-serif;
-transition:all .25s ease;
+transition:.2s;
 }
 
 body{
@@ -16,11 +16,10 @@ background:linear-gradient(135deg,#0f0f0f,#1a1a2e);
 
 .calculator{
 width:min(95vw,380px);
-background:rgba(30,30,30,0.85);
-backdrop-filter:blur(12px);
-padding:22px;
-border-radius:20px;
-box-shadow:0 20px 60px rgba(0,0,0,.6);
+background:rgba(30,30,30,0.9);
+padding:20px;
+border-radius:18px;
+box-shadow:0 15px 50px rgba(0,0,0,.6);
 }
 
 #display{
@@ -28,47 +27,36 @@ width:100%;
 padding:14px;
 font-size:22px;
 border:none;
-border-radius:12px;
+border-radius:10px;
 background:#111;
-color:#fff;
+color:white;
 overflow-x:auto;
-caret-color:#00ffe5;
-}
-
-#display:focus{
-outline:none;
-box-shadow:0 0 10px #4f46e5;
 }
 
 #result{
 text-align:right;
 color:#aaa;
 margin-bottom:8px;
-font-size:14px;
 }
 
 .pad{
 display:grid;
 grid-template-columns:repeat(4,1fr);
-gap:12px;
-margin-top:12px;
+gap:10px;
 }
 
 .pad button,
 #scientificPanel button{
-padding:15px;
+padding:14px;
 border:none;
-border-radius:14px;
-background:linear-gradient(145deg,#5b52ff,#3f37c9);
+border-radius:10px;
+background:#4f46e5;
 color:white;
-font-size:17px;
-box-shadow:0 6px 12px rgba(0,0,0,.4);
-cursor:pointer;
+font-size:16px;
 }
 
-.pad button:active,
-#scientificPanel button:active{
-transform:scale(.92);
+.pad button:active{
+transform:scale(.9);
 }
 
 #scientificPanel{
@@ -76,26 +64,23 @@ display:grid;
 grid-template-columns:repeat(4,1fr);
 gap:10px;
 margin-top:10px;
-animation:fadeIn .3s ease;
-}
-
-@keyframes fadeIn{
-from{opacity:0;transform:translateY(10px);}
-to{opacity:1;transform:translateY(0);}
+padding:10px;
+border-radius:10px;
+background:rgba(0,0,0,0.2);
 }
 
 .bottom{
 display:flex;
 gap:10px;
-margin-top:12px;
+margin-top:10px;
 }
 
 .bottom button{
 flex:1;
-padding:13px;
+padding:12px;
 border:none;
-border-radius:12px;
-font-weight:600;
+border-radius:10px;
+color:white;
 }
 
 #clear{background:#ff4d4d;}
@@ -104,25 +89,25 @@ font-weight:600;
 
 #menuBtn{
 position:fixed;
-top:18px;
-right:18px;
+top:15px;
+right:15px;
 background:#4f46e5;
-border:none;
 color:white;
-padding:12px;
-border-radius:12px;
+border:none;
+padding:10px;
+border-radius:10px;
 }
 
 #menu{
 position:fixed;
-top:65px;
-right:18px;
+top:60px;
+right:15px;
 background:#2a2a2a;
-padding:12px;
-border-radius:14px;
+padding:10px;
+border-radius:10px;
 display:none;
 flex-direction:column;
-gap:10px;
+gap:8px;
 }
 
 #menu.active{display:flex;}
@@ -136,12 +121,12 @@ transition:.3s;
 }
 
 #historyBox.show{
-max-height:220px;
+max-height:200px;
 }
 
 #historyList{
+max-height:150px;
 overflow:auto;
-max-height:180px;
 }
 
 /* THEMES */
@@ -151,6 +136,7 @@ background:#f5f5f5;
 }
 body.light .calculator{
 background:white;
+color:black;
 }
 body.light #display{
 background:#eee;
@@ -158,10 +144,10 @@ color:black;
 }
 
 body.neon{
-background:#000;
+background:black;
 }
 body.neon .calculator{
-box-shadow:0 0 30px #00ffe5;
+box-shadow:0 0 25px #00ffe5;
 }
 body.neon button{
 box-shadow:0 0 10px #00ffe5;
