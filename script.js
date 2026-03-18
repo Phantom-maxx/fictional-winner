@@ -3,12 +3,13 @@ const resultBox = document.getElementById("result");
 
 const keypad = document.getElementById("keypad");
 const scientific = document.getElementById("scientific");
+const historyBox = document.getElementById("historyBox");
 
-const historyBox = document.getElementById("history");
-
+let voiceOutput = false;
 let history = [];
+let lastInput = "";
 
-/* BUTTONS */
+/* BUTTON LAYOUT */
 const basic = [
 "7","8","9","/",
 "4","5","6","*",
@@ -22,25 +23,46 @@ const sci = [
 "tan"
 ];
 
-basic.forEach(x=>{
+/* CREATE BUTTONS */
+function createButtons(arr,container){
+arr.forEach(val=>{
 let b=document.createElement("button");
-b.innerText=x;
-keypad.appendChild(b);
+b.textContent=val;
+b.onclick=()=>insert(val);
+container.appendChild(b);
 });
-
-sci.forEach(x=>{
-let b=document.createElement("button");
-b.innerText=x;
-scientific.appendChild(b);
-});
-
-/* INPUT */
-function insert(val){
-display.value+=val;
 }
 
-/* CALC */
+createButtons(basic,keypad);
+createButtons(sci,scientific);
+
+/* INSERT LOGIC */
+function insert(val){
+
+let text = display.value;
+let last = text.slice(-1);
+
+// decimal control
+if(val==="." && /(\d*\.\d*)$/.test(text)) return;
+
+// operator overwrite
+if("+-*/^".includes(val) && "+-*/^".includes(last)){
+display.value = text.slice(0,-1)+val;
+return;
+}
+
+// functions
+if(["sin","cos","tan","log"].includes(val)){
+display.value += val+"(";
+return;
+}
+
+display.value += val;
+}
+
+/* CALCULATE */
 function calculate(){
+
 try{
 let exp = display.value;
 
@@ -54,42 +76,43 @@ exp = exp.replace(/sin\((.*?)\)/g,"Math.sin(($1)*Math.PI/180)");
 exp = exp.replace(/cos\((.*?)\)/g,"Math.cos(($1)*Math.PI/180)");
 exp = exp.replace(/tan\((.*?)\)/g,"Math.tan(($1)*Math.PI/180)");
 
-let res = eval(exp);
+let res = Function("return "+exp)();
 
-resultBox.innerText="Result: "+res;
+resultBox.textContent="Result: "+res;
 
 history.unshift(display.value+"="+res);
 renderHistory();
 
+if(voiceOutput){
+speechSynthesis.speak(new SpeechSynthesisUtterance(res));
+}
+
 }catch{
-resultBox.innerText="Error";
+resultBox.textContent="Error";
 }
 }
 
-/* EVENTS */
-keypad.onclick=e=>{
-if(e.target.tagName==="BUTTON"){
-insert(e.target.innerText);
+/* HISTORY */
+function renderHistory(){
+historyBox.innerHTML="";
+history.forEach(h=>{
+let p=document.createElement("p");
+p.textContent=h;
+p.onclick=()=>display.value=h.split("=")[0];
+historyBox.appendChild(p);
+});
 }
-};
 
-scientific.onclick=e=>{
-if(e.target.tagName==="BUTTON"){
-let val=e.target.innerText;
-
-if(["sin","cos","tan","log"].includes(val)){
-insert(val+"(");
-}else{
-insert(val);
-}
-}
-};
-
+/* CONTROLS */
 document.getElementById("equals").onclick=calculate;
 
 document.getElementById("clear").onclick=()=>{
 display.value="";
-resultBox.innerText="Result:";
+resultBox.textContent="Result:";
+};
+
+document.getElementById("backspace").onclick=()=>{
+display.value=display.value.slice(0,-1);
 };
 
 /* MENU */
@@ -98,6 +121,12 @@ document.getElementById("menuBtn").onclick=()=>{
 menu.classList.toggle("active");
 };
 
+document.addEventListener("click",(e)=>{
+if(!menu.contains(e.target) && e.target.id!=="menuBtn"){
+menu.classList.remove("active");
+}
+});
+
 document.getElementById("toggleSci").onclick=()=>{
 scientific.classList.toggle("hidden");
 };
@@ -105,6 +134,64 @@ scientific.classList.toggle("hidden");
 document.getElementById("toggleHistory").onclick=()=>{
 historyBox.classList.toggle("hidden");
 };
+
+document.getElementById("toggleVoice").onclick=()=>{
+voiceOutput=!voiceOutput;
+};
+
+document.getElementById("toggleTheme").onclick=()=>{
+document.getElementById("themeBox").classList.toggle("hidden");
+};
+
+document.querySelectorAll("[data-theme]").forEach(btn=>{
+btn.onclick=()=>{
+document.body.className=btn.dataset.theme;
+};
+});
+
+/* KEYBOARD FIXED */
+document.addEventListener("keydown",e=>{
+
+if(e.repeat) return;
+
+if(/[0-9]/.test(e.key)) insert(e.key);
+else if("+-*/().".includes(e.key)) insert(e.key);
+
+else if(e.key==="Enter"){
+e.preventDefault();
+calculate();
+}
+else if(e.key==="Backspace"){
+e.preventDefault();
+display.value=display.value.slice(0,-1);
+}
+else if(e.key==="Escape"){
+display.value="";
+resultBox.textContent="Result:";
+}
+});
+
+/* VOICE INPUT */
+let rec;
+
+if(window.SpeechRecognition||window.webkitSpeechRecognition){
+rec=new (window.SpeechRecognition||window.webkitSpeechRecognition)();
+
+rec.onresult=e=>{
+let t=e.results[0][0].transcript;
+
+t=t.replace(/plus/g,"+")
+.replace(/minus/g,"-")
+.replace(/multiply/g,"*")
+.replace(/divide/g,"/");
+
+insert(t);
+};
+}
+
+document.getElementById("voice").onclick=()=>{
+if(rec) rec.start();
+};};
 
 document.getElementById("toggleTheme").onclick=()=>{
 document.getElementById("themeOptions").classList.toggle("hidden");
