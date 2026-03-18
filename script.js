@@ -24,7 +24,7 @@ const buttons = [
 "%","+","-","^"
 ];
 
-const sciButtons = ["π","e","√","log","sin","cos","tan"];
+const sciButtons = ["π","e","√","log","sin","cos","tan","^"];
 
 buttons.forEach(b=>{
 let btn=document.createElement("button");
@@ -57,19 +57,27 @@ return;
 }
 
 display.value+=val;
-display.scrollLeft = display.scrollWidth;
+display.scrollLeft=display.scrollWidth;
 }
 
 /* CALC */
 function calc(){
 try{
-let exp=display.value
-.replace(/\^/g,"**")
-.replace(/π/g,"Math.PI")
-.replace(/e/g,"Math.E")
-.replace(/√/g,"Math.sqrt");
 
-let res=Function("return "+exp)();
+let exp = display.value;
+
+exp = exp.replace(/π/g,"Math.PI");
+exp = exp.replace(/e/g,"Math.E");
+exp = exp.replace(/\^/g,"**");
+exp = exp.replace(/√/g,"Math.sqrt");
+exp = exp.replace(/log\(/g,"Math.log10(");
+
+exp = exp.replace(/sin\(([^)]+)\)/g,"Math.sin(($1)*Math.PI/180)");
+exp = exp.replace(/cos\(([^)]+)\)/g,"Math.cos(($1)*Math.PI/180)");
+exp = exp.replace(/tan\(([^)]+)\)/g,"Math.tan(($1)*Math.PI/180)");
+
+let res = Function("return " + exp)();
+
 resultBox.innerText="Result: "+res;
 
 history.unshift(display.value+"="+res);
@@ -78,7 +86,6 @@ renderHistory();
 justCalculated=true;
 
 if(voiceToggle.checked){
-speechSynthesis.cancel();
 speechSynthesis.speak(new SpeechSynthesisUtterance(res));
 }
 
@@ -108,7 +115,11 @@ else insert(t);
 
 sciPanel.addEventListener("click",e=>{
 if(e.target.tagName!=="BUTTON")return;
-insert(e.target.textContent+"(");
+
+let val=e.target.textContent;
+
+if(val==="π"||val==="e") insert(val);
+else insert(val+"(");
 });
 
 document.getElementById("equals").onclick=calc;
@@ -146,7 +157,7 @@ btn.onclick=()=>document.body.className=btn.dataset.theme;
 
 /* KEYBOARD */
 document.addEventListener("keydown",e=>{
-if(e.repeat) return;
+if(e.repeat)return;
 
 let k=e.key;
 
@@ -161,15 +172,15 @@ else if(k==="Escape") display.value="";
 /* VOICE */
 let rec;
 
-if(window.SpeechRecognition || window.webkitSpeechRecognition){
-const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-rec = new SR();
+if(window.SpeechRecognition||window.webkitSpeechRecognition){
+const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+rec=new SR();
 
-rec.onresult = e=>{
+rec.onresult=e=>{
 let t=e.results[0][0].transcript
 .replace(/plus/gi,"+")
 .replace(/minus/gi,"-")
-.replace(/into|multiply/gi,"*")
+.replace(/multiply|into/gi,"*")
 .replace(/divide/gi,"/");
 
 insert(t);
@@ -177,20 +188,6 @@ insert(t);
 }
 
 document.getElementById("voice").onclick=()=>{
-if(rec) rec.start();
+if(rec)rec.start();
 else alert("Speech not supported");
 };
-
-/* HAPTIC + BUTTON FEEDBACK */
-if(navigator.vibrate){
-document.querySelectorAll("button").forEach(btn=>{
-btn.addEventListener("click",()=>navigator.vibrate(10));
-});
-}
-
-document.querySelectorAll("button").forEach(btn=>{
-btn.addEventListener("click",()=>{
-btn.style.transform="scale(0.9)";
-setTimeout(()=>btn.style.transform="",100);
-});
-});
