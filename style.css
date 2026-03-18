@@ -2,7 +2,7 @@
 margin:0;
 padding:0;
 box-sizing:border-box;
-font-family:'Segoe UI',sans-serif;
+font-family:sans-serif;
 }
 
 body{
@@ -10,184 +10,108 @@ display:flex;
 justify-content:center;
 align-items:center;
 min-height:100vh;
-background:linear-gradient(135deg,#0f0f0f,#1a1a2e);
+background:#0f0f0f;
 }
 
-/* MAIN CONTAINER */
+/* APP */
+.app{
+width:100%;
+max-width:400px;
+padding:10px;
+}
+
+/* CALCULATOR */
 .calculator{
-width:min(95vw,380px);
-padding:20px;
-border-radius:20px;
-background:rgba(30,30,30,0.6);
-backdrop-filter:blur(15px);
-box-shadow:0 15px 50px rgba(0,0,0,.6);
+background:#1e1e1e;
+padding:15px;
+border-radius:15px;
 display:flex;
 flex-direction:column;
-gap:14px;
+gap:10px;
 }
 
 /* DISPLAY */
 #display{
 width:100%;
-padding:16px;
-font-size:24px;
+padding:15px;
+font-size:22px;
 border:none;
-border-radius:12px;
-background:#0f0f0f;
-color:#fff;
-outline:none;
-box-shadow:inset 0 0 10px rgba(0,0,0,0.8);
-}
-
-#display:focus{
-box-shadow:0 0 10px #4f46e5;
+border-radius:10px;
+background:#111;
+color:white;
+overflow-x:auto;
 }
 
 #result{
 text-align:right;
 color:#aaa;
-font-size:14px;
 }
 
 /* GRID */
-.pad{
+#keypad,#scientific{
 display:grid;
 grid-template-columns:repeat(4,1fr);
-gap:12px;
+gap:10px;
 }
 
-/* BUTTON STYLE */
+/* BUTTON */
 button{
-border:none;
-border-radius:12px;
 padding:15px;
-font-size:16px;
+border:none;
+border-radius:10px;
+background:#4f46e5;
 color:white;
-background:linear-gradient(145deg,#4f46e5,#4338ca);
-box-shadow:5px 5px 12px #0a0a0a,-5px -5px 12px #2a2a2a;
+font-size:16px;
 cursor:pointer;
-transition:.15s ease;
-}
-
-button:hover{
-transform:translateY(-2px);
 }
 
 button:active{
-transform:scale(.92);
-box-shadow:inset 2px 2px 6px #000;
+transform:scale(.9);
 }
 
-/* SCIENTIFIC PANEL */
-#scientificPanel{
+/* CONTROLS */
+.controls{
 display:grid;
 grid-template-columns:repeat(4,1fr);
 gap:10px;
-padding:12px;
-border-radius:12px;
-background:rgba(0,0,0,0.25);
-border:1px solid rgba(255,255,255,0.05);
 }
 
-/* BOTTOM BAR */
-.bottom{
-display:flex;
-gap:10px;
+#clear{background:red;}
+#equals{background:green;}
+#voice{background:#333;}
+
+/* MENU */
+.menu-container{
+position:absolute;
+top:10px;
+right:10px;
 }
 
-#clear{
-background:linear-gradient(145deg,#ff4d4d,#cc0000);
-}
-
-#voice{
-background:#2a2a2a;
-}
-
-#equals{
-background:linear-gradient(145deg,#00c853,#009624);
-}
-
-/* MENU BUTTON */
-#menuBtn{
-position:fixed;
-top:15px;
-right:15px;
-padding:10px;
-border-radius:12px;
-background:#4f46e5;
-box-shadow:0 5px 15px rgba(0,0,0,.4);
-}
-
-/* MENU PANEL */
 #menu{
-position:fixed;
-top:60px;
-right:15px;
-background:rgba(30,30,30,0.9);
-padding:12px;
-border-radius:12px;
 display:none;
 flex-direction:column;
-gap:8px;
-backdrop-filter:blur(10px);
+background:#222;
+padding:10px;
+gap:5px;
 }
 
 #menu.active{display:flex;}
 
 .hidden{display:none;}
 
-/* HISTORY */
-#historyBox{
-max-height:0;
-overflow:hidden;
-transition:.3s;
-}
-
-#historyBox.show{
-max-height:200px;
-}
-
-#historyList{
-max-height:150px;
-overflow:auto;
-font-size:14px;
-color:#ddd;
-}
-
 /* THEMES */
-
-/* LIGHT */
 body.light{
-background:#f1f1f1;
+background:#f5f5f5;
 }
 body.light .calculator{
 background:white;
+color:black;
 }
 body.light #display{
 background:#eee;
 color:black;
 }
-body.light button{
-background:#ddd;
-color:black;
-box-shadow:none;
-}
 
-/* NEON */
-body.neon{
-background:black;
-}
 body.neon .calculator{
-box-shadow:0 0 25px #00ffe5;
-}
-body.neon button{
-background:black;
-border:1px solid #00ffe5;
-box-shadow:0 0 10px #00ffe5;
-color:#00ffe5;
-}
-body.neon #display{
-background:black;
-color:#00ffe5;
-box-shadow:0 0 10px #00ffe5 inset;
+box-shadow:0 0 20px cyan;
 }
