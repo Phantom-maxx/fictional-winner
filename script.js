@@ -1,4 +1,4 @@
-// ================= STATE =================
+// STATE
 const AppState = {
 expression: "",
 history: [],
@@ -6,7 +6,7 @@ voiceOutput: false,
 scientificMode: false
 };
 
-// ================= DOM =================
+// DOM
 const display = document.getElementById("display");
 const resultBox = document.getElementById("result");
 const keypad = document.getElementById("keypad");
@@ -14,39 +14,43 @@ const scientific = document.getElementById("scientific");
 const historyBox = document.getElementById("historyBox");
 const menu = document.getElementById("menu");
 
-// ================= INIT =================
-function init(){
+// INIT
+window.onload = ()=>{
 renderButtons();
 UI.update();
-}
-window.onload = init;
+};
 
-// ================= INPUT =================
+// INPUT
 const Input = {
 
 isOperator(c){ return "+-*/%^".includes(c); },
 
 insert(val){
+
+// NEW SCIENTIFIC HANDLING
+if(val === "ln") val = "ln(";
+if(val === "|x|") val = "abs(";
+if(val === "x²") val = "^2";
+if(val === "x³") val = "^3";
+if(val === "1/x") val = "1/(";
+
 let exp = AppState.expression;
 let last = exp.slice(-1);
 
 if(exp==="" && "+*/%^".includes(val)) return;
 
-// decimal fix
 if(val==="."){
 let parts = exp.split(/[+\-*/%^]/);
 if(parts[parts.length-1].includes(".")) return;
 }
 
-// operator overwrite
 if(this.isOperator(val) && this.isOperator(last)){
 AppState.expression = exp.slice(0,-1)+val;
 UI.update();
 return;
 }
 
-// functions
-if(["sin","cos","tan","log"].includes(val)){
+if(["sin","cos","tan","log","ln"].includes(val)){
 AppState.expression += val+"(";
 }else{
 AppState.expression += val;
@@ -67,7 +71,7 @@ UI.result("Result:");
 }
 };
 
-// ================= CALC =================
+// CALC
 const Calc = {
 
 evaluate(exp){
@@ -78,33 +82,22 @@ let e = exp
 .replace(/\^/g,"**")
 .replace(/√/g,"Math.sqrt")
 .replace(/log\(/g,"Math.log10(")
+.replace(/ln\(/g,"Math.log(")
+.replace(/abs\(/g,"Math.abs(")
+.replace(/%/g,"/100")
 .replace(/sin\(/g,"Math.sin((Math.PI/180)*")
 .replace(/cos\(/g,"Math.cos((Math.PI/180)*")
 .replace(/tan\(/g,"Math.tan((Math.PI/180)*");
 
-this.validate(e);
-
 return Function('"use strict";return ('+e+')')();
-},
-
-validate(e){
-if(!/^[0-9+\-*/().%^Math\s]*$/.test(e)) throw "Invalid";
-
-let s=0;
-for(let c of e){
-if(c==="(") s++;
-if(c===")") s--;
-if(s<0) throw "Bracket";
-}
-if(s!==0) throw "Bracket";
 }
 };
 
-// ================= UI =================
+// UI
 const UI = {
 
 update(){
-display.value = AppState.expression || "";
+display.value = AppState.expression;
 display.scrollLeft = display.scrollWidth;
 },
 
@@ -132,7 +125,7 @@ this.renderHistory();
 }
 };
 
-// ================= ACTION =================
+// CALCULATE
 function calculate(){
 try{
 let res = Calc.evaluate(AppState.expression);
@@ -152,7 +145,7 @@ UI.result("Error");
 }
 }
 
-// ================= BUTTONS =================
+// BUTTONS
 function renderButtons(){
 
 keypad.innerHTML="";
@@ -164,7 +157,12 @@ keypad
 );
 
 makeButtons(
-[")","π","e","^","√","log","sin","cos","tan"],
+[
+")","π","e","^",
+"√","log","ln","%",
+"sin","cos","tan","|x|",
+"x²","x³","1/x","("
+],
 scientific
 );
 }
@@ -181,59 +179,33 @@ container.appendChild(b);
 });
 }
 
-// ================= CONTROLS =================
-document.getElementById("equals").onclick=(e)=>{
-e.stopPropagation();
-calculate();
-};
+// CONTROLS
+document.getElementById("equals").onclick=(e)=>{e.stopPropagation();calculate();};
+document.getElementById("clear").onclick=(e)=>{e.stopPropagation();Input.clear();};
+document.getElementById("backspace").onclick=(e)=>{e.stopPropagation();Input.backspace();};
 
-document.getElementById("clear").onclick=(e)=>{
-e.stopPropagation();
-Input.clear();
-};
-
-document.getElementById("backspace").onclick=(e)=>{
-e.stopPropagation();
-Input.backspace();
-};
-
-// ================= MENU FIX =================
+// MENU
 document.getElementById("menuBtn").onclick=(e)=>{
 e.stopPropagation();
 menu.classList.toggle("active");
 };
 
-// prevent menu close when clicking inside
 menu.addEventListener("click",(e)=>e.stopPropagation());
 
-// close only when clicking outside
-document.addEventListener("click",()=>{
-menu.classList.remove("active");
-});
+document.addEventListener("click",()=>menu.classList.remove("active"));
 
-// ================= TOGGLES =================
+// TOGGLES
 document.getElementById("toggleSci").onclick=(e)=>{
 e.stopPropagation();
+AppState.scientificMode=!AppState.scientificMode;
 
-AppState.scientificMode = !AppState.scientificMode;
-
-if(AppState.scientificMode){
-keypad.classList.add("hidden");
-scientific.classList.remove("hidden");
-}else{
-scientific.classList.add("hidden");
-keypad.classList.remove("hidden");
-}
+keypad.classList.toggle("hidden");
+scientific.classList.toggle("hidden");
 };
 
 document.getElementById("toggleHistory").onclick=(e)=>{
 e.stopPropagation();
 historyBox.classList.toggle("hidden");
-};
-
-document.getElementById("toggleVoice").onclick=(e)=>{
-e.stopPropagation();
-AppState.voiceOutput=!AppState.voiceOutput;
 };
 
 document.getElementById("toggleTheme").onclick=(e)=>{
@@ -248,7 +220,13 @@ document.body.className=b.dataset.theme;
 };
 });
 
-// ================= KEYBOARD =================
+// VOICE CHECKBOX
+const voiceToggle = document.getElementById("voiceToggle");
+voiceToggle.addEventListener("change",()=>{
+AppState.voiceOutput = voiceToggle.checked;
+});
+
+// KEYBOARD
 document.addEventListener("keydown",e=>{
 if(e.repeat) return;
 
@@ -268,7 +246,7 @@ Input.clear();
 }
 });
 
-// ================= VOICE =================
+// VOICE INPUT
 let rec;
 
 if(window.SpeechRecognition||window.webkitSpeechRecognition){
