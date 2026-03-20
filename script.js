@@ -1,9 +1,9 @@
 // ================= STATE =================
 const AppState = {
-    expression: "",
-    history: [],
-    voiceOutput: false,
-    scientificMode: false
+expression: "",
+history: [],
+voiceOutput: false,
+scientificMode: false
 };
 
 // ================= DOM =================
@@ -13,245 +13,233 @@ const keypad = document.getElementById("keypad");
 const scientific = document.getElementById("scientific");
 const historyBox = document.getElementById("historyBox");
 
-// ================= INPUT CONTROLLER =================
-const InputController = {
+// ================= INPUT =================
+const Input = {
 
-    isOperator(char){
-        return "+-*/%^".includes(char);
-    },
+isOperator(c){ return "+-*/%^".includes(c); },
 
-    insert(value){
-        let exp = AppState.expression;
-        let last = exp.slice(-1);
+insert(val){
+let exp = AppState.expression;
+let last = exp.slice(-1);
 
-        // prevent invalid start
-        if(exp === "" && "+*/%^".includes(value)) return;
+if(exp==="" && "+*/%^".includes(val)) return;
 
-        // decimal control
-        if(value === "."){
-            let parts = exp.split(/[+\-*/%^]/);
-            if(parts[parts.length-1].includes(".")) return;
-        }
+// decimal fix
+if(val==="."){
+let parts = exp.split(/[+\-*/%^]/);
+if(parts[parts.length-1].includes(".")) return;
+}
 
-        // operator overwrite
-        if(this.isOperator(value) && this.isOperator(last)){
-            AppState.expression = exp.slice(0,-1) + value;
-            UI.updateDisplay();
-            return;
-        }
+// operator overwrite
+if(this.isOperator(val) && this.isOperator(last)){
+AppState.expression = exp.slice(0,-1)+val;
+UI.update();
+return;
+}
 
-        // functions
-        if(["sin","cos","tan","log"].includes(value)){
-            AppState.expression += value + "(";
-        } else {
-            AppState.expression += value;
-        }
+// functions
+if(["sin","cos","tan","log"].includes(val)){
+AppState.expression += val+"(";
+}else{
+AppState.expression += val;
+}
 
-        UI.updateDisplay();
-    },
+UI.update();
+},
 
-    backspace(){
-        AppState.expression = AppState.expression.slice(0,-1);
-        UI.updateDisplay();
-    },
+backspace(){
+AppState.expression = AppState.expression.slice(0,-1);
+UI.update();
+},
 
-    clear(){
-        AppState.expression = "";
-        UI.updateDisplay();
-        UI.updateResult("Result:");
-    }
+clear(){
+AppState.expression="";
+UI.update();
+UI.result("Result:");
+}
 };
 
-// ================= CALC ENGINE =================
-const CalcEngine = {
+// ================= CALC =================
+const Calc = {
 
-    evaluate(exp){
+evaluate(exp){
 
-        let expression = exp
-        .replace(/π/g,"Math.PI")
-        .replace(/e/g,"Math.E")
-        .replace(/\^/g,"**")
-        .replace(/√/g,"Math.sqrt")
-        .replace(/log\(/g,"Math.log10(")
-        .replace(/sin\(/g,"Math.sin((Math.PI/180)*")
-        .replace(/cos\(/g,"Math.cos((Math.PI/180)*")
-        .replace(/tan\(/g,"Math.tan((Math.PI/180)*");
+let e = exp
+.replace(/π/g,"Math.PI")
+.replace(/e/g,"Math.E")
+.replace(/\^/g,"**")
+.replace(/√/g,"Math.sqrt")
+.replace(/log\(/g,"Math.log10(")
+.replace(/sin\(/g,"Math.sin((Math.PI/180)*")
+.replace(/cos\(/g,"Math.cos((Math.PI/180)*")
+.replace(/tan\(/g,"Math.tan((Math.PI/180)*");
 
-        this.validate(expression);
+this.validate(e);
 
-        return Function('"use strict";return ('+expression+')')();
-    },
+return Function('"use strict";return ('+e+')')();
+},
 
-    validate(expression){
-        if(!/^[0-9+\-*/().%^Math\s]*$/.test(expression)){
-            throw "Invalid Input";
-        }
+validate(e){
+if(!/^[0-9+\-*/().%^Math\s]*$/.test(e)) throw "Invalid";
 
-        let stack = 0;
-        for(let c of expression){
-            if(c==="(") stack++;
-            if(c===")") stack--;
-            if(stack<0) throw "Bracket Error";
-        }
-        if(stack!==0) throw "Bracket Error";
-    }
+let s=0;
+for(let c of e){
+if(c==="(") s++;
+if(c===")") s--;
+if(s<0) throw "Bracket";
+}
+if(s!==0) throw "Bracket";
+}
 };
 
 // ================= UI =================
 const UI = {
 
-    updateDisplay(){
-        display.value = AppState.expression;
-        display.scrollLeft = display.scrollWidth;
-    },
+update(){
+display.value = AppState.expression;
+display.scrollLeft = display.scrollWidth;
+},
 
-    updateResult(text){
-        resultBox.textContent = text;
-    },
+result(txt){
+resultBox.textContent = txt;
+},
 
-    renderHistory(){
-        historyBox.innerHTML = `<button id="clearHistory">Clear History</button>`;
+renderHistory(){
+historyBox.innerHTML = `<button id="clearHistory">Clear History</button>`;
 
-        AppState.history.forEach(h=>{
-            let p = document.createElement("p");
-            p.textContent = h;
-            p.onclick = ()=> {
-                AppState.expression = h.split("=")[0];
-                this.updateDisplay();
-            };
-            historyBox.appendChild(p);
-        });
+AppState.history.forEach(h=>{
+let p=document.createElement("p");
+p.textContent=h;
+p.onclick=()=>{
+AppState.expression=h.split("=")[0];
+this.update();
+};
+historyBox.appendChild(p);
+});
 
-        document.getElementById("clearHistory").onclick = ()=>{
-            AppState.history = [];
-            this.renderHistory();
-        };
-    }
+document.getElementById("clearHistory").onclick=()=>{
+AppState.history=[];
+this.renderHistory();
+};
+}
 };
 
-// ================= ACTIONS =================
+// ================= ACTION =================
 function calculate(){
-    try{
-        let res = CalcEngine.evaluate(AppState.expression);
+try{
+let res = Calc.evaluate(AppState.expression);
 
-        UI.updateResult("Result: " + res);
+UI.result("Result: "+res);
 
-        AppState.history.unshift(AppState.expression + "=" + res);
-        UI.renderHistory();
+AppState.history.unshift(AppState.expression+"="+res);
+UI.renderHistory();
 
-        if(AppState.voiceOutput){
-            speechSynthesis.cancel();
-            speechSynthesis.speak(new SpeechSynthesisUtterance(res));
-        }
-
-    }catch(e){
-        UI.updateResult("Error: " + e);
-    }
+if(AppState.voiceOutput){
+speechSynthesis.speak(new SpeechSynthesisUtterance(res));
 }
 
-// ================= BUTTON INIT =================
-function createButtons(arr, container){
-    arr.forEach(val=>{
-        let b = document.createElement("button");
-        b.textContent = val;
-        b.onclick = ()=> InputController.insert(val);
-        container.appendChild(b);
-    });
+}catch{
+UI.result("Error");
+}
 }
 
-createButtons(
+// ================= BUTTONS =================
+function makeButtons(arr,container){
+arr.forEach(v=>{
+let b=document.createElement("button");
+b.textContent=v;
+b.onclick=()=>Input.insert(v);
+container.appendChild(b);
+});
+}
+
+makeButtons(
 ["7","8","9","/","4","5","6","*","1","2","3","-","0",".","+","("],
 keypad
 );
 
-createButtons(
+makeButtons(
 [")","π","e","^","√","log","sin","cos","tan"],
 scientific
 );
 
 // ================= CONTROLS =================
-document.getElementById("equals").onclick = calculate;
-document.getElementById("clear").onclick = InputController.clear.bind(InputController);
-document.getElementById("backspace").onclick = InputController.backspace.bind(InputController);
+document.getElementById("equals").onclick=calculate;
+document.getElementById("clear").onclick=()=>Input.clear();
+document.getElementById("backspace").onclick=()=>Input.backspace();
 
 // ================= MENU =================
-const menu = document.getElementById("menu");
+const menu=document.getElementById("menu");
 
-document.getElementById("menuBtn").onclick = ()=>{
-    menu.classList.toggle("active");
-};
+document.getElementById("menuBtn").onclick=()=>menu.classList.toggle("active");
 
 document.addEventListener("click",(e)=>{
-    if(!menu.contains(e.target) && e.target.id!=="menuBtn"){
-        menu.classList.remove("active");
-    }
+if(!menu.contains(e.target) && e.target.id!=="menuBtn"){
+menu.classList.remove("active");
+}
 });
 
-document.getElementById("toggleSci").onclick = ()=>{
-    AppState.scientificMode = !AppState.scientificMode;
-    keypad.classList.toggle("hidden");
-    scientific.classList.toggle("hidden");
+document.getElementById("toggleSci").onclick=()=>{
+keypad.classList.toggle("hidden");
+scientific.classList.toggle("hidden");
 };
 
-document.getElementById("toggleHistory").onclick = ()=>{
-    historyBox.classList.toggle("hidden");
+document.getElementById("toggleHistory").onclick=()=>{
+historyBox.classList.toggle("hidden");
 };
 
-document.getElementById("toggleVoice").onclick = ()=>{
-    AppState.voiceOutput = !AppState.voiceOutput;
+document.getElementById("toggleVoice").onclick=()=>{
+AppState.voiceOutput=!AppState.voiceOutput;
 };
 
-document.getElementById("toggleTheme").onclick = ()=>{
-    document.getElementById("themeBox").classList.toggle("hidden");
+document.getElementById("toggleTheme").onclick=()=>{
+document.getElementById("themeBox").classList.toggle("hidden");
 };
 
-document.querySelectorAll("[data-theme]").forEach(btn=>{
-    btn.onclick = ()=>{
-        document.body.className = btn.dataset.theme;
-    };
+document.querySelectorAll("[data-theme]").forEach(b=>{
+b.onclick=()=>document.body.className=b.dataset.theme;
 });
 
 // ================= KEYBOARD =================
-document.addEventListener("keydown", e=>{
+document.addEventListener("keydown",e=>{
+if(e.repeat) return;
 
-    if(e.repeat) return;
+if(/[0-9]/.test(e.key)) Input.insert(e.key);
+else if("+-*/().%^".includes(e.key)) Input.insert(e.key);
 
-    if(/[0-9]/.test(e.key)) InputController.insert(e.key);
-    else if("+-*/().%^".includes(e.key)) InputController.insert(e.key);
-
-    else if(e.key==="Enter"){
-        e.preventDefault();
-        calculate();
-    }
-    else if(e.key==="Backspace"){
-        e.preventDefault();
-        InputController.backspace();
-    }
-    else if(e.key==="Escape"){
-        InputController.clear();
-    }
+else if(e.key==="Enter"){
+e.preventDefault();
+calculate();
+}
+else if(e.key==="Backspace"){
+e.preventDefault();
+Input.backspace();
+}
+else if(e.key==="Escape"){
+Input.clear();
+}
 });
 
 // ================= VOICE =================
 let rec;
 
-if(window.SpeechRecognition || window.webkitSpeechRecognition){
-    rec = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+if(window.SpeechRecognition||window.webkitSpeechRecognition){
+rec=new (window.SpeechRecognition||window.webkitSpeechRecognition)();
 
-    rec.onresult = e=>{
-        let t = e.results[0][0].transcript.toLowerCase();
+rec.onresult=e=>{
+let t=e.results[0][0].transcript.toLowerCase();
 
-        t = t.replace(/plus/g,"+")
-             .replace(/minus/g,"-")
-             .replace(/multiply|into/g,"*")
-             .replace(/divide/g,"/")
-             .replace(/power/g,"^")
-             .replace(/pi/g,"π");
+t=t.replace(/plus/g,"+")
+.replace(/minus/g,"-")
+.replace(/multiply|into/g,"*")
+.replace(/divide/g,"/")
+.replace(/power/g,"^")
+.replace(/pi/g,"π");
 
-        InputController.insert(t);
-    };
+Input.insert(t);
+};
 }
 
-document.getElementById("voice").onclick = ()=>{
-    if(rec) rec.start();
+document.getElementById("voice").onclick=()=>{
+if(rec) rec.start();
 };
