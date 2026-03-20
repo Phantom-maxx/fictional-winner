@@ -171,13 +171,25 @@ function makeButtons(arr,container){
 arr.forEach(v=>{
 let b=document.createElement("button");
 b.textContent=v;
+
+// TYPE DETECTION
+if(!isNaN(v) || v === ".") b.classList.add("num");
+else if("+-*/^=".includes(v)) b.classList.add("op");
+else b.classList.add("func");
+
 b.onclick=(e)=>{
 e.stopPropagation();
 Input.insert(v);
 };
+
 container.appendChild(b);
 });
 }
+
+document.getElementById("clear").classList.add("func");
+document.getElementById("backspace").classList.add("func");
+document.getElementById("voice").classList.add("func");
+document.getElementById("equals").classList.add("op");
 
 // CONTROLS
 document.getElementById("equals").onclick=(e)=>{e.stopPropagation();calculate();};
