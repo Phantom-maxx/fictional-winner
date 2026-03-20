@@ -28,6 +28,7 @@ border-radius:15px;
 display:flex;
 flex-direction:column;
 gap:10px;
+box-shadow:0 10px 30px rgba(0,0,0,0.5);
 }
 
 /* DISPLAY */
@@ -63,6 +64,7 @@ background:#4f46e5;
 color:white;
 font-size:16px;
 cursor:pointer;
+transition:0.15s;
 }
 
 button:active{
@@ -76,8 +78,8 @@ grid-template-columns:repeat(4,1fr);
 gap:10px;
 }
 
-#clear{background:red;}
-#equals{background:green;}
+#clear{background:#ff4d4d;}
+#equals{background:#00c853;}
 #voice{background:#333;}
 
 /* MENU */
@@ -92,12 +94,21 @@ display:none;
 flex-direction:column;
 background:#222;
 padding:10px;
+border-radius:10px;
 gap:5px;
 }
 
 #menu.active{display:flex;}
 
 .hidden{display:none;}
+
+/* HISTORY */
+#historyBox{
+max-height:200px;
+overflow:auto;
+font-size:14px;
+color:white;
+}
 
 /* THEMES */
 body.light{
@@ -112,6 +123,12 @@ background:#eee;
 color:black;
 }
 
+body.neon{
+background:black;
+}
 body.neon .calculator{
 box-shadow:0 0 20px cyan;
+}
+body.neon button{
+box-shadow:0 0 10px cyan;
 }
