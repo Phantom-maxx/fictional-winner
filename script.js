@@ -12,6 +12,14 @@ const resultBox = document.getElementById("result");
 const keypad = document.getElementById("keypad");
 const scientific = document.getElementById("scientific");
 const historyBox = document.getElementById("historyBox");
+const menu = document.getElementById("menu");
+
+// ================= INIT =================
+function init(){
+renderButtons();
+UI.update();
+}
+window.onload = init;
 
 // ================= INPUT =================
 const Input = {
@@ -96,7 +104,7 @@ if(s!==0) throw "Bracket";
 const UI = {
 
 update(){
-display.value = AppState.expression;
+display.value = AppState.expression || "";
 display.scrollLeft = display.scrollWidth;
 },
 
@@ -135,6 +143,7 @@ AppState.history.unshift(AppState.expression+"="+res);
 UI.renderHistory();
 
 if(AppState.voiceOutput){
+speechSynthesis.cancel();
 speechSynthesis.speak(new SpeechSynthesisUtterance(res));
 }
 
@@ -144,14 +153,10 @@ UI.result("Error");
 }
 
 // ================= BUTTONS =================
-function makeButtons(arr,container){
-arr.forEach(v=>{
-let b=document.createElement("button");
-b.textContent=v;
-b.onclick=()=>Input.insert(v);
-container.appendChild(b);
-});
-}
+function renderButtons(){
+
+keypad.innerHTML="";
+scientific.innerHTML="";
 
 makeButtons(
 ["7","8","9","/","4","5","6","*","1","2","3","-","0",".","+","("],
@@ -162,42 +167,85 @@ makeButtons(
 [")","π","e","^","√","log","sin","cos","tan"],
 scientific
 );
+}
+
+function makeButtons(arr,container){
+arr.forEach(v=>{
+let b=document.createElement("button");
+b.textContent=v;
+b.onclick=(e)=>{
+e.stopPropagation();
+Input.insert(v);
+};
+container.appendChild(b);
+});
+}
 
 // ================= CONTROLS =================
-document.getElementById("equals").onclick=calculate;
-document.getElementById("clear").onclick=()=>Input.clear();
-document.getElementById("backspace").onclick=()=>Input.backspace();
-
-// ================= MENU =================
-const menu=document.getElementById("menu");
-
-document.getElementById("menuBtn").onclick=()=>menu.classList.toggle("active");
-
-document.addEventListener("click",(e)=>{
-if(!menu.contains(e.target) && e.target.id!=="menuBtn"){
-menu.classList.remove("active");
-}
-});
-
-document.getElementById("toggleSci").onclick=()=>{
-keypad.classList.toggle("hidden");
-scientific.classList.toggle("hidden");
+document.getElementById("equals").onclick=(e)=>{
+e.stopPropagation();
+calculate();
 };
 
-document.getElementById("toggleHistory").onclick=()=>{
+document.getElementById("clear").onclick=(e)=>{
+e.stopPropagation();
+Input.clear();
+};
+
+document.getElementById("backspace").onclick=(e)=>{
+e.stopPropagation();
+Input.backspace();
+};
+
+// ================= MENU FIX =================
+document.getElementById("menuBtn").onclick=(e)=>{
+e.stopPropagation();
+menu.classList.toggle("active");
+};
+
+// prevent menu close when clicking inside
+menu.addEventListener("click",(e)=>e.stopPropagation());
+
+// close only when clicking outside
+document.addEventListener("click",()=>{
+menu.classList.remove("active");
+});
+
+// ================= TOGGLES =================
+document.getElementById("toggleSci").onclick=(e)=>{
+e.stopPropagation();
+
+AppState.scientificMode = !AppState.scientificMode;
+
+if(AppState.scientificMode){
+keypad.classList.add("hidden");
+scientific.classList.remove("hidden");
+}else{
+scientific.classList.add("hidden");
+keypad.classList.remove("hidden");
+}
+};
+
+document.getElementById("toggleHistory").onclick=(e)=>{
+e.stopPropagation();
 historyBox.classList.toggle("hidden");
 };
 
-document.getElementById("toggleVoice").onclick=()=>{
+document.getElementById("toggleVoice").onclick=(e)=>{
+e.stopPropagation();
 AppState.voiceOutput=!AppState.voiceOutput;
 };
 
-document.getElementById("toggleTheme").onclick=()=>{
+document.getElementById("toggleTheme").onclick=(e)=>{
+e.stopPropagation();
 document.getElementById("themeBox").classList.toggle("hidden");
 };
 
 document.querySelectorAll("[data-theme]").forEach(b=>{
-b.onclick=()=>document.body.className=b.dataset.theme;
+b.onclick=(e)=>{
+e.stopPropagation();
+document.body.className=b.dataset.theme;
+};
 });
 
 // ================= KEYBOARD =================
@@ -240,6 +288,7 @@ Input.insert(t);
 };
 }
 
-document.getElementById("voice").onclick=()=>{
+document.getElementById("voice").onclick=(e)=>{
+e.stopPropagation();
 if(rec) rec.start();
 };
