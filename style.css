@@ -1,65 +1,55 @@
-*{
+body{
 margin:0;
-padding:0;
-box-sizing:border-box;
+background:#121212;
+color:white;
 font-family:sans-serif;
 }
 
-body{
-background:#121212;
-display:flex;
-justify-content:center;
-align-items:center;
-min-height:100vh;
-color:white;
-}
-
 .app{
-width:100%;
 max-width:420px;
-height:100vh;
-display:flex;
-flex-direction:column;
+margin:auto;
+padding:10px;
 }
 
 /* DISPLAY */
-#result{
+.display-box{
 text-align:right;
-padding:10px 15px;
-font-size:18px;
-color:#888;
+padding:10px;
 }
 
 #display{
 width:100%;
-padding:20px;
-font-size:40px;
+font-size:36px;
+background:none;
 border:none;
-background:transparent;
 color:white;
 text-align:right;
-outline:none;
 }
 
-/* KEYPAD GRID */
-#keypad,#scientific{
+/* TOP ROW */
+.top-row{
+display:grid;
+grid-template-columns:repeat(5,1fr);
+gap:10px;
+}
+
+/* KEYPAD */
+.keypad{
 display:grid;
 grid-template-columns:repeat(4,1fr);
-gap:15px;
-padding:15px;
-flex:1;
+gap:12px;
+margin-top:10px;
 }
 
-/* BUTTON BASE */
+/* BUTTON */
 button{
-border:none;
-border-radius:12px;
 padding:18px;
 font-size:20px;
-cursor:pointer;
-background:transparent;
+border:none;
+border-radius:10px;
+background:#1e1e1e;
 color:white;
-transition:0.15s;
+cursor:pointer;
 }
 
 button:active{
@@ -67,86 +57,109 @@ transform:scale(0.9);
 }
 
 /* COLORS */
+.num{color:#ffd54f;}
+.op{color:#ff9800;}
+.func{color:#29b6f6;}
 
-/* numbers */
-button.num{
-color:#f5d76e;
-}
+#equals{color:#00e676;}
+#clear{color:#ff5252;}
 
-/* operators */
-button.op{
-color:#ff9800;
-font-weight:bold;
-}
-
-/* functions */
-button.func{
-color:#29b6f6;
-}
-
-/* controls */
-#clear{
-color:#ff6b6b;
-}
-#equals{
-color:#00e676;
-font-size:24px;
-}
-
-/* voice */
-#voice{
-color:#66bb6a;
-}
-
-/* MENU */
-.menu-container{
-position:absolute;
-top:15px;
-right:15px;
-}
-
-#menu{
-display:none;
-flex-direction:column;
-background:#1e1e1e;
-padding:10px;
-border-radius:10px;
-gap:8px;
-}
-
-#menu.active{
+/* CONTROLS */
+.controls{
 display:flex;
+justify-content:space-between;
+margin-top:10px;
 }
 
-.hidden{
-display:none;
-}
-
-/* SCIENTIFIC PANEL */
+/* SCI */
 #scientific{
-background:#181818;
-border-radius:12px;
+display:grid;
+grid-template-columns:repeat(4,1fr);
+gap:10px;
+margin-top:10px;
 }
 
-/* VOICE TOGGLE */
-.voice-toggle{
-display:flex;
-align-items:center;
-gap:8px;
-font-size:14px;
+/* HIDDEN */
+.hidden{display:none;}body{
+margin:0;
+background:#121212;
+color:white;
+font-family:sans-serif;
 }
 
-.voice-toggle input{
-accent-color:#ff9800;
+.app{
+max-width:420px;
+margin:auto;
+padding:10px;
 }
 
-/* MOBILE */
-@media(max-width:480px){
-button{
-padding:16px;
-font-size:18px;
+/* DISPLAY */
+.display-box{
+text-align:right;
+padding:10px;
 }
+
 #display{
-font-size:32px;
+width:100%;
+font-size:36px;
+background:none;
+border:none;
+color:white;
+text-align:right;
 }
+
+/* TOP ROW */
+.top-row{
+display:grid;
+grid-template-columns:repeat(5,1fr);
+gap:10px;
 }
+
+/* KEYPAD */
+.keypad{
+display:grid;
+grid-template-columns:repeat(4,1fr);
+gap:12px;
+margin-top:10px;
+}
+
+/* BUTTON */
+button{
+padding:18px;
+font-size:20px;
+border:none;
+border-radius:10px;
+background:#1e1e1e;
+color:white;
+cursor:pointer;
+}
+
+button:active{
+transform:scale(0.9);
+}
+
+/* COLORS */
+.num{color:#ffd54f;}
+.op{color:#ff9800;}
+.func{color:#29b6f6;}
+
+#equals{color:#00e676;}
+#clear{color:#ff5252;}
+
+/* CONTROLS */
+.controls{
+display:flex;
+justify-content:space-between;
+margin-top:10px;
+}
+
+/* SCI */
+#scientific{
+display:grid;
+grid-template-columns:repeat(4,1fr);
+gap:10px;
+margin-top:10px;
+}
+
+/* HIDDEN */
+.hidden{display:none;}
