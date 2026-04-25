@@ -3,57 +3,73 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Pro Calculator</title>
+<title>Smart Calculator</title>
 <link rel="stylesheet" href="style.css">
 </head>
 
-<body class="dark">
+<body>
 
 <div class="app">
 
-<!-- MENU -->
-<div class="menu-container">
-<button id="menuBtn">☰</button>
-
-<div id="menu">
-<button id="toggleSci">Scientific</button>
-<button id="toggleHistory">History</button>
-
-<label class="voice-toggle">
-<input type="checkbox" id="voiceToggle">
-<span>Voice Output</span>
-</label>
-
-<button id="toggleTheme">Themes</button>
-
-<div id="themeBox" class="hidden">
-<button data-theme="dark">Dark</button>
-<button data-theme="light">Light</button>
-<button data-theme="neon">Neon</button>
-</div>
-</div>
-</div>
-
-<!-- CALCULATOR -->
-<div class="calculator">
-
-<div id="result">Result:</div>
-
+<!-- DISPLAY -->
+<div class="display-box">
+<div id="result">0</div>
 <input id="display" readonly placeholder="0">
+</div>
 
-<div id="keypad"></div>
-<div id="scientific" class="hidden"></div>
+<!-- FUNCTION ROW -->
+<div class="top-row">
+<button class="func" onclick="Input.insert('√')">√</button>
+<button class="func" onclick="Input.insert('%')">%</button>
+<button class="func" onclick="Input.insert('(')">(</button>
+<button class="func" onclick="Input.insert(')')">)</button>
+<button id="voice" class="func">🎤</button>
+</div>
 
+<!-- KEYPAD -->
+<div class="keypad">
+
+<button class="num">7</button>
+<button class="num">8</button>
+<button class="num">9</button>
+<button class="op">/</button>
+
+<button class="num">4</button>
+<button class="num">5</button>
+<button class="num">6</button>
+<button class="op">*</button>
+
+<button class="num">1</button>
+<button class="num">2</button>
+<button class="num">3</button>
+<button class="op">-</button>
+
+<button class="num">.</button>
+<button class="num">0</button>
+<button id="equals" class="op">=</button>
+<button class="op">+</button>
+
+</div>
+
+<!-- CONTROLS -->
 <div class="controls">
 <button id="clear">C</button>
 <button id="backspace">⌫</button>
-<button id="voice">🎤</button>
-<button id="equals">=</button>
+
+<label class="voice-toggle">
+<input type="checkbox" id="voiceToggle">
+<span>Voice</span>
+</label>
+
+<button id="toggleSci">Sci</button>
 </div>
 
+<!-- SCIENTIFIC -->
+<div id="scientific" class="hidden"></div>
+
+<!-- HISTORY -->
 <div id="historyBox" class="hidden"></div>
 
-</div>
 </div>
 
 <script src="script.js"></script>
