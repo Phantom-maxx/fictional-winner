@@ -1,51 +1,65 @@
 body{
 margin:0;
 font-family:sans-serif;
-background:#121212;
+background:linear-gradient(135deg,#0f0f0f,#1c1c1c);
 color:white;
 }
 
 .app{
 max-width:420px;
 margin:auto;
-padding:10px;
+padding:12px;
 }
 
+/* DISPLAY */
 .display{
 text-align:right;
+margin-bottom:10px;
 }
 
 #input{
 width:100%;
-font-size:32px;
+font-size:34px;
 border:none;
 background:none;
 color:white;
 text-align:right;
 }
 
+/* GRID */
 #keypad,#scientific{
 display:grid;
 grid-template-columns:repeat(4,1fr);
-gap:10px;
-margin-top:10px;
+gap:12px;
 }
 
+/* BUTTON */
 button{
 padding:16px;
-font-size:18px;
 border:none;
-border-radius:10px;
-background:#1e1e1e;
+border-radius:12px;
+background:rgba(255,255,255,0.05);
 color:white;
+font-size:18px;
+cursor:pointer;
+transition:0.2s;
 }
 
+button:active{
+transform:scale(0.9);
+}
+
+/* COLORS */
 .num{color:#ffd54f;}
 .op{color:#ff9800;}
 .func{color:#29b6f6;}
 
+#equals{color:#00e676;}
+#clear{color:#ff5252;}
+
 .hidden{display:none;}
 
+/* MENU */
 .menu{
 position:relative;
 }
@@ -56,10 +70,18 @@ position:absolute;
 right:0;
 background:#222;
 padding:10px;
+border-radius:10px;
 }
 
 #menuBox.active{
 display:block;
+}
+
+/* HISTORY */
+#history{
+margin-top:10px;
+max-height:150px;
+overflow:auto;
 }
 
 /* THEMES */
