@@ -2,20 +2,57 @@ const input = document.getElementById("input");
 const resultBox = document.getElementById("result");
 
 let expr = "";
-let history = [];
 let voiceOn = false;
 let sciMode = false;
+
+/* BUTTON DATA */
+const keys = [
+"7","8","9","/",
+"4","5","6","*",
+"1","2","3","-",
+"0",".","+","="
+];
+
+const sciKeys = [
+"sin","cos","tan","log",
+"ln","π","e","^",
+"√","%"
+];
+
+/* GENERATE BUTTONS */
+function createButtons(arr, container){
+container.innerHTML="";
+arr.forEach(k=>{
+let b=document.createElement("button");
+b.innerText=k;
+
+if(!isNaN(k)||k===".") b.classList.add("num");
+else if("+-*/=".includes(k)) b.classList.add("op");
+else b.classList.add("func");
+
+b.onclick=()=>{
+if(k==="=") calculate();
+else insert(k);
+};
+
+container.appendChild(b);
+});
+}
+
+createButtons(keys, document.getElementById("keypad"));
+createButtons(sciKeys, document.getElementById("scientific"));
 
 /* INPUT */
 function insert(val){
 
-// decimal control
+let last = expr.slice(-1);
+
+// decimal fix
 let parts = expr.split(/[+\-*/]/);
 if(val==="." && parts[parts.length-1].includes(".")) return;
 
 // operator overwrite
-let last = expr.slice(-1);
-if("+-*/^".includes(val) && "+-*/^".includes(last)){
+if("+-*/".includes(val) && "+-*/".includes(last)){
 expr = expr.slice(0,-1)+val;
 update();
 return;
@@ -33,46 +70,28 @@ update();
 
 function update(){
 input.value = expr;
-input.scrollLeft = input.scrollWidth;
 }
 
-/* CALC */
-function calc(){
+/* CALCULATE */
+function calculate(){
 try{
-
-let e = expr;
-
-// constants
-e = e.replace(/π/g,"Math.PI").replace(/e/g,"Math.E");
-
-// powers
-e = e.replace(/\^/g,"**");
-
-// sqrt
-e = e.replace(/√/g,"Math.sqrt");
-
-// % 
-e = e.replace(/%/g,"/100");
-
-// DEGREE TRIG
-e = e.replace(/sin\(([^)]+)\)/g,"Math.sin(($1)*Math.PI/180)");
-e = e.replace(/cos\(([^)]+)\)/g,"Math.cos(($1)*Math.PI/180)");
-e = e.replace(/tan\(([^)]+)\)/g,"Math.tan(($1)*Math.PI/180)");
-
-// logs
-e = e.replace(/log\(/g,"Math.log10(");
-e = e.replace(/ln\(/g,"Math.log(");
+let e = expr
+.replace(/π/g,"Math.PI")
+.replace(/e/g,"Math.E")
+.replace(/\^/g,"**")
+.replace(/√/g,"Math.sqrt")
+.replace(/%/g,"/100")
+.replace(/sin\(([^)]+)\)/g,"Math.sin(($1)*Math.PI/180)")
+.replace(/cos\(([^)]+)\)/g,"Math.cos(($1)*Math.PI/180)")
+.replace(/tan\(([^)]+)\)/g,"Math.tan(($1)*Math.PI/180)")
+.replace(/log\(/g,"Math.log10(")
+.replace(/ln\(/g,"Math.log(");
 
 let res = Function('"use strict";return ('+e+')')();
 
 resultBox.innerText = res;
 
-// history
-history.unshift(expr+"="+res);
-renderHistory();
-
 if(voiceOn){
-speechSynthesis.cancel();
 speechSynthesis.speak(new SpeechSynthesisUtterance(res));
 }
 
@@ -81,104 +100,45 @@ resultBox.innerText="Error";
 }
 }
 
-/* HISTORY */
-function renderHistory(){
-let box = document.getElementById("historyList");
-box.innerHTML="";
+/* CONTROLS */
+document.getElementById("clear").onclick=()=>{
+expr="";
+update();
+resultBox.innerText="0";
+};
 
-history.forEach(h=>{
-let div=document.createElement("div");
-div.innerText=h;
-div.onclick=()=>{
-expr=h.split("=")[0];
+document.getElementById("back").onclick=()=>{
+expr = expr.slice(0,-1);
 update();
 };
-box.appendChild(div);
-});
-}
 
-document.getElementById("clearHistory").onclick=()=>{
-history=[];
-renderHistory();
-};
+document.getElementById("equals").onclick=calculate;
 
-/* BUTTONS */
-const keys = ["7","8","9","/","4","5","6","*","1","2","3","-","0",".","+","("];
-const sci = ["sin","cos","tan","log","ln","π","e","^","√","%"];
-
-function gen(arr,box){
-box.innerHTML="";
-arr.forEach(k=>{
-let b=document.createElement("button");
-b.innerText=k;
-
-if(!isNaN(k)||k===".") b.classList.add("num");
-else if("+-*/=".includes(k)) b.classList.add("op");
-else b.classList.add("func");
-
-b.onclick=()=>insert(k);
-box.appendChild(b);
-});
-}
-
-gen(keys, document.getElementById("keypad"));
-gen(sci, document.getElementById("scientific"));
-
-/* EVENTS */
-document.getElementById("equals").onclick=calc;
-document.getElementById("clear").onclick=()=>{expr="";update();resultBox.innerText="0";};
-document.getElementById("back").onclick=()=>{expr=expr.slice(0,-1);update();};
-
-/* MENU */
-const menuBtn=document.getElementById("menuBtn");
-const menuBox=document.getElementById("menuBox");
-
-menuBtn.onclick=(e)=>{
-e.stopPropagation();
-menuBox.classList.toggle("active");
-};
-
-document.addEventListener("click",()=>menuBox.classList.remove("active"));
-menuBox.onclick=e=>e.stopPropagation();
-
-/* TOGGLES */
+/* SCI TOGGLE */
 document.getElementById("toggleSci").onclick=()=>{
 sciMode=!sciMode;
 document.getElementById("scientific").classList.toggle("hidden");
-document.getElementById("keypad").classList.toggle("hidden");
 };
 
-document.getElementById("toggleHistory").onclick=()=>{
-document.getElementById("history").classList.toggle("hidden");
+/* VOICE */
+document.getElementById("voiceToggle").onchange=e=>{
+voiceOn=e.target.checked;
 };
-
-document.getElementById("voiceToggle").onchange=e=>voiceOn=e.target.checked;
-
-/* THEMES */
-document.querySelectorAll("[data-theme]").forEach(btn=>{
-btn.onclick=()=>{
-document.body.className=btn.dataset.theme;
-};
-});
 
 /* KEYBOARD */
 document.addEventListener("keydown",e=>{
 if(e.repeat) return;
 
 if(/[0-9]/.test(e.key)) insert(e.key);
-else if("+-*/.^".includes(e.key)) insert(e.key);
+else if("+-*/.".includes(e.key)) insert(e.key);
 
 if(e.key==="Enter"){
 e.preventDefault();
-calc();
+calculate();
 }
+
 if(e.key==="Backspace"){
-e.preventDefault();
 expr=expr.slice(0,-1);
-update();
-}
-if(e.key==="Escape"){
-expr="";
 update();
 }
 });
@@ -190,14 +150,11 @@ if(window.SpeechRecognition||window.webkitSpeechRecognition){
 rec=new (window.SpeechRecognition||window.webkitSpeechRecognition)();
 
 rec.onresult=e=>{
-let t=e.results[0][0].transcript.toLowerCase();
-
-t=t.replace(/plus/g,"+")
+let t=e.results[0][0].transcript
+.replace(/plus/g,"+")
 .replace(/minus/g,"-")
-.replace(/multiply|into/g,"*")
-.replace(/divide/g,"/")
-.replace(/power/g,"^")
-.replace(/pi/g,"π");
+.replace(/into/g,"*")
+.replace(/divide/g,"/");
 
 insert(t);
 };
