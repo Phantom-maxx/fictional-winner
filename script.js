@@ -1,163 +1,120 @@
-// ================= STATE =================
-let expression = "";
-let voiceOutput = false;
-let scientificMode = false;
-
-// ================= DOM =================
-const display = document.getElementById("display");
+const input = document.getElementById("input");
 const resultBox = document.getElementById("result");
-const sciPanel = document.getElementById("scientific");
 
-// ================= INPUT =================
+let expr = "";
+let history = [];
+let voiceOn = false;
+let sciMode = false;
+
+/* INPUT */
 function insert(val){
 
+let last = expr.slice(-1);
+
 // decimal fix
-let parts = expression.split(/[+\-*/]/);
+let parts = expr.split(/[+\-*/]/);
 if(val==="." && parts[parts.length-1].includes(".")) return;
 
 // operator overwrite
-let last = expression.slice(-1);
-if("+-*/^".includes(val) && "+-*/^".includes(last)){
-expression = expression.slice(0,-1)+val;
+if("+-*/".includes(val) && "+-*/".includes(last)){
+expr = expr.slice(0,-1)+val;
 update();
 return;
 }
 
-// scientific functions
-if(["sin","cos","tan","log"].includes(val)){
-expression += val+"(";
-}else{
-expression += val;
-}
-
+expr += val;
 update();
 }
 
 function update(){
-display.value = expression;
-display.scrollLeft = display.scrollWidth;
+input.value = expr;
 }
 
-// ================= CALC =================
-function calculate(){
+/* CALC */
+function calc(){
 try{
+let e = expr
+.replace(/π/g,"Math.PI")
+.replace(/e/g,"Math.E")
+.replace(/\^/g,"**")
+.replace(/√/g,"Math.sqrt")
+.replace(/sin\(/g,"Math.sin(($1)*Math.PI/180)")
+.replace(/cos\(/g,"Math.cos(($1)*Math.PI/180)")
+.replace(/tan\(/g,"Math.tan(($1)*Math.PI/180)")
+.replace(/log\(/g,"Math.log10(")
+.replace(/ln\(/g,"Math.log(");
 
-let exp = expression;
+let r = Function("return "+e)();
+resultBox.innerText = r;
 
-// constants
-exp = exp.replace(/π/g,"Math.PI");
+history.unshift(expr+"="+r);
 
-// sqrt
-exp = exp.replace(/√/g,"Math.sqrt");
-
-// powers
-exp = exp.replace(/\^/g,"**");
-
-// DEGREE FIX (IMPORTANT)
-exp = exp.replace(/sin\(([^)]+)\)/g,"Math.sin(($1)*Math.PI/180)");
-exp = exp.replace(/cos\(([^)]+)\)/g,"Math.cos(($1)*Math.PI/180)");
-exp = exp.replace(/tan\(([^)]+)\)/g,"Math.tan(($1)*Math.PI/180)");
-
-// log
-exp = exp.replace(/log\(/g,"Math.log10(");
-
-let result = Function('"use strict";return ('+exp+')')();
-
-resultBox.innerText = result;
-
-// voice output
-if(voiceOutput){
-speechSynthesis.cancel();
-speechSynthesis.speak(new SpeechSynthesisUtterance(result));
+if(voiceOn){
+speechSynthesis.speak(new SpeechSynthesisUtterance(r));
 }
 
 }catch{
-resultBox.innerText = "Error";
+resultBox.innerText="Error";
 }
 }
 
-// ================= BUTTON EVENTS =================
-document.addEventListener("click",(e)=>{
+/* BUTTON GEN */
+const keys = ["7","8","9","/","4","5","6","*","1","2","3","-","0",".","+","("];
+const sci = ["sin","cos","tan","log","ln","π","e","^","√","%"];
 
-let val = e.target.innerText;
-
-// keypad / sci
-if(e.target.closest("#keypad") || e.target.closest("#scientific")){
-if(val==="=") calculate();
-else insert(val);
-}
-
-// clear
-if(e.target.id==="clear"){
-expression="";
-update();
-resultBox.innerText="0";
-}
-
-// backspace
-if(e.target.id==="backspace"){
-expression = expression.slice(0,-1);
-update();
-}
-
+function gen(arr,box){
+box.innerHTML="";
+arr.forEach(k=>{
+let b=document.createElement("button");
+b.innerText=k;
+b.onclick=()=>insert(k);
+box.appendChild(b);
 });
+}
 
-// ================= SCI MODE =================
-document.getElementById("toggleSci").onclick = ()=>{
-scientificMode = !scientificMode;
+gen(keys, document.getElementById("keypad"));
+gen(sci, document.getElementById("scientific"));
 
-sciPanel.classList.toggle("hidden");
+/* EVENTS */
+document.getElementById("equals").onclick=calc;
+document.getElementById("clear").onclick=()=>{expr="";update();};
+document.getElementById("back").onclick=()=>{expr=expr.slice(0,-1);update();};
 
-// visual feedback
-document.getElementById("toggleSci").style.background =
-scientificMode ? "#29b6f6" : "";
+/* MENU */
+document.getElementById("menuBtn").onclick=()=>{
+document.getElementById("menuBox").classList.toggle("active");
 };
 
-// ================= VOICE =================
-document.getElementById("voiceToggle").onchange = (e)=>{
-voiceOutput = e.target.checked;
+/* TOGGLES */
+document.getElementById("toggleSci").onclick=()=>{
+sciMode=!sciMode;
+document.getElementById("scientific").classList.toggle("hidden");
 };
 
-// ================= KEYBOARD =================
-document.addEventListener("keydown",(e)=>{
+document.getElementById("voiceToggle").onchange=e=>voiceOn=e.target.checked;
 
-if(e.repeat) return;
-
+/* KEYBOARD */
+document.addEventListener("keydown",e=>{
 if(/[0-9]/.test(e.key)) insert(e.key);
-else if("+-*/.^".includes(e.key)) insert(e.key);
+if("+-*/.".includes(e.key)) insert(e.key);
 
-else if(e.key==="Enter"){
+if(e.key==="Enter"){
 e.preventDefault();
-calculate();
+calc();
 }
-else if(e.key==="Backspace"){
-e.preventDefault();
-expression = expression.slice(0,-1);
+if(e.key==="Backspace"){
+expr=expr.slice(0,-1);
 update();
 }
 });
 
-// ================= VOICE INPUT =================
-let rec;
-
-if(window.SpeechRecognition || window.webkitSpeechRecognition){
-rec = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
-
-rec.onresult = (e)=>{
-let t = e.results[0][0].transcript.toLowerCase();
-
-// smarter parsing
-t = t.replace(/plus/g,"+")
-.replace(/minus/g,"-")
-.replace(/multiply|into/g,"*")
-.replace(/divide/g,"/")
-.replace(/power/g,"^")
-.replace(/pi/g,"π");
-
+/* VOICE INPUT */
+let rec = new(window.SpeechRecognition||window.webkitSpeechRecognition)();
+rec.onresult=e=>{
+let t=e.results[0][0].transcript
+.replace(/plus/g,"+")
+.replace(/minus/g,"-");
 insert(t);
 };
-}
 
-document.getElementById("voice").onclick = ()=>{
-if(rec) rec.start();
-};
+document.getElementById("voice").onclick=()=>rec.start();
