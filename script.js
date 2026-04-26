@@ -9,48 +9,71 @@ let sciMode = false;
 /* INPUT */
 function insert(val){
 
-let last = expr.slice(-1);
-
-// decimal fix
+// decimal control
 let parts = expr.split(/[+\-*/]/);
 if(val==="." && parts[parts.length-1].includes(".")) return;
 
 // operator overwrite
-if("+-*/".includes(val) && "+-*/".includes(last)){
+let last = expr.slice(-1);
+if("+-*/^".includes(val) && "+-*/^".includes(last)){
 expr = expr.slice(0,-1)+val;
 update();
 return;
 }
 
+// functions
+if(["sin","cos","tan","log","ln"].includes(val)){
+expr += val+"(";
+}else{
 expr += val;
+}
+
 update();
 }
 
 function update(){
 input.value = expr;
+input.scrollLeft = input.scrollWidth;
 }
 
 /* CALC */
 function calc(){
 try{
-let e = expr
-.replace(/π/g,"Math.PI")
-.replace(/e/g,"Math.E")
-.replace(/\^/g,"**")
-.replace(/√/g,"Math.sqrt")
-.replace(/sin\(/g,"Math.sin(($1)*Math.PI/180)")
-.replace(/cos\(/g,"Math.cos(($1)*Math.PI/180)")
-.replace(/tan\(/g,"Math.tan(($1)*Math.PI/180)")
-.replace(/log\(/g,"Math.log10(")
-.replace(/ln\(/g,"Math.log(");
 
-let r = Function("return "+e)();
-resultBox.innerText = r;
+let e = expr;
 
-history.unshift(expr+"="+r);
+// constants
+e = e.replace(/π/g,"Math.PI").replace(/e/g,"Math.E");
+
+// powers
+e = e.replace(/\^/g,"**");
+
+// sqrt
+e = e.replace(/√/g,"Math.sqrt");
+
+// % 
+e = e.replace(/%/g,"/100");
+
+// DEGREE TRIG
+e = e.replace(/sin\(([^)]+)\)/g,"Math.sin(($1)*Math.PI/180)");
+e = e.replace(/cos\(([^)]+)\)/g,"Math.cos(($1)*Math.PI/180)");
+e = e.replace(/tan\(([^)]+)\)/g,"Math.tan(($1)*Math.PI/180)");
+
+// logs
+e = e.replace(/log\(/g,"Math.log10(");
+e = e.replace(/ln\(/g,"Math.log(");
+
+let res = Function('"use strict";return ('+e+')')();
+
+resultBox.innerText = res;
+
+// history
+history.unshift(expr+"="+res);
+renderHistory();
 
 if(voiceOn){
-speechSynthesis.speak(new SpeechSynthesisUtterance(r));
+speechSynthesis.cancel();
+speechSynthesis.speak(new SpeechSynthesisUtterance(res));
 }
 
 }catch{
@@ -58,7 +81,28 @@ resultBox.innerText="Error";
 }
 }
 
-/* BUTTON GEN */
+/* HISTORY */
+function renderHistory(){
+let box = document.getElementById("historyList");
+box.innerHTML="";
+
+history.forEach(h=>{
+let div=document.createElement("div");
+div.innerText=h;
+div.onclick=()=>{
+expr=h.split("=")[0];
+update();
+};
+box.appendChild(div);
+});
+}
+
+document.getElementById("clearHistory").onclick=()=>{
+history=[];
+renderHistory();
+};
+
+/* BUTTONS */
 const keys = ["7","8","9","/","4","5","6","*","1","2","3","-","0",".","+","("];
 const sci = ["sin","cos","tan","log","ln","π","e","^","√","%"];
 
@@ -67,6 +111,11 @@ box.innerHTML="";
 arr.forEach(k=>{
 let b=document.createElement("button");
 b.innerText=k;
+
+if(!isNaN(k)||k===".") b.classList.add("num");
+else if("+-*/=".includes(k)) b.classList.add("op");
+else b.classList.add("func");
+
 b.onclick=()=>insert(k);
 box.appendChild(b);
 });
@@ -77,44 +126,83 @@ gen(sci, document.getElementById("scientific"));
 
 /* EVENTS */
 document.getElementById("equals").onclick=calc;
-document.getElementById("clear").onclick=()=>{expr="";update();};
+document.getElementById("clear").onclick=()=>{expr="";update();resultBox.innerText="0";};
 document.getElementById("back").onclick=()=>{expr=expr.slice(0,-1);update();};
 
 /* MENU */
-document.getElementById("menuBtn").onclick=()=>{
-document.getElementById("menuBox").classList.toggle("active");
+const menuBtn=document.getElementById("menuBtn");
+const menuBox=document.getElementById("menuBox");
+
+menuBtn.onclick=(e)=>{
+e.stopPropagation();
+menuBox.classList.toggle("active");
 };
+
+document.addEventListener("click",()=>menuBox.classList.remove("active"));
+menuBox.onclick=e=>e.stopPropagation();
 
 /* TOGGLES */
 document.getElementById("toggleSci").onclick=()=>{
 sciMode=!sciMode;
 document.getElementById("scientific").classList.toggle("hidden");
+document.getElementById("keypad").classList.toggle("hidden");
+};
+
+document.getElementById("toggleHistory").onclick=()=>{
+document.getElementById("history").classList.toggle("hidden");
 };
 
 document.getElementById("voiceToggle").onchange=e=>voiceOn=e.target.checked;
 
+/* THEMES */
+document.querySelectorAll("[data-theme]").forEach(btn=>{
+btn.onclick=()=>{
+document.body.className=btn.dataset.theme;
+};
+});
+
 /* KEYBOARD */
 document.addEventListener("keydown",e=>{
+if(e.repeat) return;
+
 if(/[0-9]/.test(e.key)) insert(e.key);
-if("+-*/.".includes(e.key)) insert(e.key);
+else if("+-*/.^".includes(e.key)) insert(e.key);
 
 if(e.key==="Enter"){
 e.preventDefault();
 calc();
 }
 if(e.key==="Backspace"){
+e.preventDefault();
 expr=expr.slice(0,-1);
+update();
+}
+if(e.key==="Escape"){
+expr="";
 update();
 }
 });
 
 /* VOICE INPUT */
-let rec = new(window.SpeechRecognition||window.webkitSpeechRecognition)();
+let rec;
+
+if(window.SpeechRecognition||window.webkitSpeechRecognition){
+rec=new (window.SpeechRecognition||window.webkitSpeechRecognition)();
+
 rec.onresult=e=>{
-let t=e.results[0][0].transcript
-.replace(/plus/g,"+")
-.replace(/minus/g,"-");
+let t=e.results[0][0].transcript.toLowerCase();
+
+t=t.replace(/plus/g,"+")
+.replace(/minus/g,"-")
+.replace(/multiply|into/g,"*")
+.replace(/divide/g,"/")
+.replace(/power/g,"^")
+.replace(/pi/g,"π");
+
 insert(t);
 };
+}
 
-document.getElementById("voice").onclick=()=>rec.start();
+document.getElementById("voice").onclick=()=>{
+if(rec) rec.start();
+};
