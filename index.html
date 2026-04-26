@@ -2,35 +2,13 @@
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Pro Calculator</title>
+<title>Calculator</title>
 <link rel="stylesheet" href="style.css">
 </head>
 
-<body class="dark">
+<body>
 
 <div class="app">
-
-<!-- MENU -->
-<div class="menu">
-<button id="menuBtn">☰</button>
-
-<div id="menuBox">
-<button id="toggleSci">Scientific</button>
-<button id="toggleHistory">History</button>
-
-<label class="voice-toggle">
-<input type="checkbox" id="voiceToggle"> Voice Output
-</label>
-
-<button id="themeBtn">Themes</button>
-
-<div id="themes">
-<button data-theme="dark">Dark</button>
-<button data-theme="light">Light</button>
-<button data-theme="neon">Neon</button>
-</div>
-</div>
-</div>
 
 <!-- DISPLAY -->
 <div class="display">
@@ -49,13 +27,12 @@
 <button id="clear">C</button>
 <button id="back">⌫</button>
 <button id="equals">=</button>
+<button id="toggleSci">Sci</button>
 <button id="voice">🎤</button>
-</div>
 
-<!-- HISTORY -->
-<div id="history" class="hidden">
-<button id="clearHistory">Clear</button>
-<div id="historyList"></div>
+<label>
+<input type="checkbox" id="voiceToggle"> Voice
+</label>
 </div>
 
 </div>
