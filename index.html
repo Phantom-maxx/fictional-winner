@@ -1,74 +1,59 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Smart Calculator</title>
+<title>Pro Calculator</title>
 <link rel="stylesheet" href="style.css">
 </head>
 
-<body>
+<body class="dark">
 
 <div class="app">
 
-<!-- DISPLAY -->
-<div class="display-box">
-<div id="result">0</div>
-<input id="display" readonly placeholder="0">
+<!-- MENU -->
+<div class="menu">
+<button id="menuBtn">☰</button>
+
+<div id="menuBox">
+<button id="toggleSci">Scientific</button>
+<button id="toggleHistory">History</button>
+
+<label>
+<input type="checkbox" id="voiceToggle"> Voice Output
+</label>
+
+<button id="themeBtn">Themes</button>
+
+<div id="themes">
+<button data-theme="dark">Dark</button>
+<button data-theme="light">Light</button>
+<button data-theme="neon">Neon</button>
+</div>
+</div>
 </div>
 
-<!-- FUNCTION ROW -->
-<div class="top-row">
-<button class="func" onclick="Input.insert('√')">√</button>
-<button class="func" onclick="Input.insert('%')">%</button>
-<button class="func" onclick="Input.insert('(')">(</button>
-<button class="func" onclick="Input.insert(')')">)</button>
-<button id="voice" class="func">🎤</button>
+<!-- DISPLAY -->
+<div class="display">
+<div id="result">0</div>
+<input id="input" readonly>
 </div>
 
 <!-- KEYPAD -->
-<div class="keypad">
+<div id="keypad"></div>
 
-<button class="num">7</button>
-<button class="num">8</button>
-<button class="num">9</button>
-<button class="op">/</button>
-
-<button class="num">4</button>
-<button class="num">5</button>
-<button class="num">6</button>
-<button class="op">*</button>
-
-<button class="num">1</button>
-<button class="num">2</button>
-<button class="num">3</button>
-<button class="op">-</button>
-
-<button class="num">.</button>
-<button class="num">0</button>
-<button id="equals" class="op">=</button>
-<button class="op">+</button>
-
-</div>
+<!-- SCI -->
+<div id="scientific" class="hidden"></div>
 
 <!-- CONTROLS -->
 <div class="controls">
 <button id="clear">C</button>
-<button id="backspace">⌫</button>
-
-<label class="voice-toggle">
-<input type="checkbox" id="voiceToggle">
-<span>Voice</span>
-</label>
-
-<button id="toggleSci">Sci</button>
+<button id="back">⌫</button>
+<button id="equals">=</button>
+<button id="voice">🎤</button>
 </div>
 
-<!-- SCIENTIFIC -->
-<div id="scientific" class="hidden"></div>
-
 <!-- HISTORY -->
-<div id="historyBox" class="hidden"></div>
+<div id="history" class="hidden"></div>
 
 </div>
 
