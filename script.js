@@ -1,13 +1,15 @@
+// ================= STATE =================
+let expression = "";
+let voiceOutput = false;
+let scientificMode = false;
+
+// ================= DOM =================
 const display = document.getElementById("display");
 const resultBox = document.getElementById("result");
+const sciPanel = document.getElementById("scientific");
 
-let expression = "";
-let history = [];
-let voiceOutput = false;
-
-/* INSERT */
-const Input = {
-insert(val){
+// ================= INPUT =================
+function insert(val){
 
 // decimal fix
 let parts = expression.split(/[+\-*/]/);
@@ -15,87 +17,114 @@ if(val==="." && parts[parts.length-1].includes(".")) return;
 
 // operator overwrite
 let last = expression.slice(-1);
-if("+-*/".includes(val) && "+-*/".includes(last)){
+if("+-*/^".includes(val) && "+-*/^".includes(last)){
 expression = expression.slice(0,-1)+val;
 update();
 return;
 }
 
+// scientific functions
+if(["sin","cos","tan","log"].includes(val)){
+expression += val+"(";
+}else{
 expression += val;
+}
+
 update();
 }
-};
 
-/* UPDATE */
 function update(){
 display.value = expression;
+display.scrollLeft = display.scrollWidth;
 }
 
-/* CALCULATE */
+// ================= CALC =================
 function calculate(){
 try{
-let exp = expression
-.replace(/√/g,"Math.sqrt")
-.replace(/%/g,"/100");
 
-let res = Function("return "+exp)();
-resultBox.innerText = res;
+let exp = expression;
 
-history.unshift(expression+"="+res);
+// constants
+exp = exp.replace(/π/g,"Math.PI");
 
+// sqrt
+exp = exp.replace(/√/g,"Math.sqrt");
+
+// powers
+exp = exp.replace(/\^/g,"**");
+
+// DEGREE FIX (IMPORTANT)
+exp = exp.replace(/sin\(([^)]+)\)/g,"Math.sin(($1)*Math.PI/180)");
+exp = exp.replace(/cos\(([^)]+)\)/g,"Math.cos(($1)*Math.PI/180)");
+exp = exp.replace(/tan\(([^)]+)\)/g,"Math.tan(($1)*Math.PI/180)");
+
+// log
+exp = exp.replace(/log\(/g,"Math.log10(");
+
+let result = Function('"use strict";return ('+exp+')')();
+
+resultBox.innerText = result;
+
+// voice output
 if(voiceOutput){
-speechSynthesis.speak(new SpeechSynthesisUtterance(res));
+speechSynthesis.cancel();
+speechSynthesis.speak(new SpeechSynthesisUtterance(result));
 }
 
 }catch{
-resultBox.innerText="Error";
+resultBox.innerText = "Error";
 }
 }
 
-/* BUTTON EVENTS */
-document.querySelectorAll(".num,.op").forEach(btn=>{
-btn.onclick=()=>Input.insert(btn.innerText);
-});
+// ================= BUTTON EVENTS =================
+document.addEventListener("click",(e)=>{
 
-document.getElementById("equals").onclick=calculate;
+let val = e.target.innerText;
 
-document.getElementById("clear").onclick=()=>{
+// keypad / sci
+if(e.target.closest("#keypad") || e.target.closest("#scientific")){
+if(val==="=") calculate();
+else insert(val);
+}
+
+// clear
+if(e.target.id==="clear"){
 expression="";
 update();
 resultBox.innerText="0";
-};
-
-document.getElementById("backspace").onclick=()=>{
-expression = expression.slice(0,-1);
-update();
-};
-
-/* SCIENTIFIC */
-document.getElementById("toggleSci").onclick=()=>{
-let sci = document.getElementById("scientific");
-
-if(sci.innerHTML===""){
-["sin","cos","tan","log","π","^"].forEach(f=>{
-let b=document.createElement("button");
-b.innerText=f;
-b.onclick=()=>Input.insert(f+"(");
-sci.appendChild(b);
-});
 }
 
-sci.classList.toggle("hidden");
+// backspace
+if(e.target.id==="backspace"){
+expression = expression.slice(0,-1);
+update();
+}
+
+});
+
+// ================= SCI MODE =================
+document.getElementById("toggleSci").onclick = ()=>{
+scientificMode = !scientificMode;
+
+sciPanel.classList.toggle("hidden");
+
+// visual feedback
+document.getElementById("toggleSci").style.background =
+scientificMode ? "#29b6f6" : "";
 };
 
-/* VOICE */
-const toggle = document.getElementById("voiceToggle");
-toggle.onchange=()=>voiceOutput=toggle.checked;
+// ================= VOICE =================
+document.getElementById("voiceToggle").onchange = (e)=>{
+voiceOutput = e.target.checked;
+};
 
-/* KEYBOARD */
-document.addEventListener("keydown",e=>{
+// ================= KEYBOARD =================
+document.addEventListener("keydown",(e)=>{
+
 if(e.repeat) return;
 
-if(/[0-9]/.test(e.key)) Input.insert(e.key);
-else if("+-*/.".includes(e.key)) Input.insert(e.key);
+if(/[0-9]/.test(e.key)) insert(e.key);
+else if("+-*/.^".includes(e.key)) insert(e.key);
 
 else if(e.key==="Enter"){
 e.preventDefault();
@@ -108,23 +137,27 @@ update();
 }
 });
 
-/* VOICE INPUT */
+// ================= VOICE INPUT =================
 let rec;
 
-if(window.SpeechRecognition||window.webkitSpeechRecognition){
-rec=new (window.SpeechRecognition||window.webkitSpeechRecognition)();
+if(window.SpeechRecognition || window.webkitSpeechRecognition){
+rec = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
 
-rec.onresult=e=>{
-let t=e.results[0][0].transcript
-.replace(/plus/g,"+")
+rec.onresult = (e)=>{
+let t = e.results[0][0].transcript.toLowerCase();
+
+// smarter parsing
+t = t.replace(/plus/g,"+")
 .replace(/minus/g,"-")
-.replace(/into/g,"*")
-.replace(/divide/g,"/");
+.replace(/multiply|into/g,"*")
+.replace(/divide/g,"/")
+.replace(/power/g,"^")
+.replace(/pi/g,"π");
 
-Input.insert(t);
+insert(t);
 };
 }
 
-document.getElementById("voice").onclick=()=>{
+document.getElementById("voice").onclick = ()=>{
 if(rec) rec.start();
 };
