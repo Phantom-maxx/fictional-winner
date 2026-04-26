@@ -1,74 +1,208 @@
-﻿
----
+const input = document.getElementById("input");
+const resultBox = document.getElementById("result");
 
-# License
+let expr = "";
+let history = [];
+let voiceOn = false;
+let sciMode = false;
 
-Copyright © Devender
+/* INPUT */
+function insert(val){
 
-All rights reserved.
+// decimal control
+let parts = expr.split(/[+\-*/]/);
+if(val==="." && parts[parts.length-1].includes(".")) return;
 
-This software is sold under a **Restricted Usage License**.
+// operator overwrite
+let last = expr.slice(-1);
+if("+-*/^".includes(val) && "+-*/^".includes(last)){
+expr = expr.slice(0,-1)+val;
+update();
+return;
+}
 
----
+// functions
+if(["sin","cos","tan","log","ln"].includes(val)){
+expr += val+"(";
+}else{
+expr += val;
+}
 
-## Allowed
+update();
+}
 
-The buyer is permitted to:
+function update(){
+input.value = expr;
+input.scrollLeft = input.scrollWidth;
+}
 
-- Use this software for personal or commercial projects
-- Modify the source code
-- Integrate the calculator into their own applications
-- Customize UI or functionality
+/* CALC */
+function calc(){
+try{
 
----
+let e = expr;
 
-## Not Allowed
+// constants
+e = e.replace(/π/g,"Math.PI").replace(/e/g,"Math.E");
 
-The buyer **may NOT**:
+// powers
+e = e.replace(/\^/g,"**");
 
-- Resell this software
-- Redistribute the software
-- Share the source code publicly
-- Upload it to marketplaces
-- Claim authorship of the original work
+// sqrt
+e = e.replace(/√/g,"Math.sqrt");
 
-This restriction applies whether the software is modified or not.
+// % 
+e = e.replace(/%/g,"/100");
 
----
+// DEGREE TRIG
+e = e.replace(/sin\(([^)]+)\)/g,"Math.sin(($1)*Math.PI/180)");
+e = e.replace(/cos\(([^)]+)\)/g,"Math.cos(($1)*Math.PI/180)");
+e = e.replace(/tan\(([^)]+)\)/g,"Math.tan(($1)*Math.PI/180)");
 
-## Resale Permission
+// logs
+e = e.replace(/log\(/g,"Math.log10(");
+e = e.replace(/ln\(/g,"Math.log(");
 
-If the buyer wishes to:
+let res = Function('"use strict";return ('+e+')')();
 
-- Resell the software
-- Redistribute the code
-- Sell it on marketplaces
-- Transfer ownership
+resultBox.innerText = res;
 
-They **must contact the owner first** and obtain a separate commercial license.
+// history
+history.unshift(expr+"="+res);
+renderHistory();
 
-Contact:
-Devender Singh
-0.dark.phantom.8@gmail.com
+if(voiceOn){
+speechSynthesis.cancel();
+speechSynthesis.speak(new SpeechSynthesisUtterance(res));
+}
 
-Failure to comply with these terms may lead to:
+}catch{
+resultBox.innerText="Error";
+}
+}
 
-- License termination
-- Removal requests
-- Legal consequences under applicable copyright laws.
+/* HISTORY */
+function renderHistory(){
+let box = document.getElementById("historyList");
+box.innerHTML="";
 
----
+history.forEach(h=>{
+let div=document.createElement("div");
+div.innerText=h;
+div.onclick=()=>{
+expr=h.split("=")[0];
+update();
+};
+box.appendChild(div);
+});
+}
 
-# Contact
+document.getElementById("clearHistory").onclick=()=>{
+history=[];
+renderHistory();
+};
 
-For support, licensing, or resale permission:
+/* BUTTONS */
+const keys = ["7","8","9","/","4","5","6","*","1","2","3","-","0",".","+","("];
+const sci = ["sin","cos","tan","log","ln","π","e","^","√","%"];
 
-Email:
-0.dark.phantom.8@gmail.com
+function gen(arr,box){
+box.innerHTML="";
+arr.forEach(k=>{
+let b=document.createElement("button");
+b.innerText=k;
 
+if(!isNaN(k)||k===".") b.classList.add("num");
+else if("+-*/=".includes(k)) b.classList.add("op");
+else b.classList.add("func");
 
----
+b.onclick=()=>insert(k);
+box.appendChild(b);
+});
+}
 
-# Version
+gen(keys, document.getElementById("keypad"));
+gen(sci, document.getElementById("scientific"));
 
-Current Version: **1.0**
+/* EVENTS */
+document.getElementById("equals").onclick=calc;
+document.getElementById("clear").onclick=()=>{expr="";update();resultBox.innerText="0";};
+document.getElementById("back").onclick=()=>{expr=expr.slice(0,-1);update();};
+
+/* MENU */
+const menuBtn=document.getElementById("menuBtn");
+const menuBox=document.getElementById("menuBox");
+
+menuBtn.onclick=(e)=>{
+e.stopPropagation();
+menuBox.classList.toggle("active");
+};
+
+document.addEventListener("click",()=>menuBox.classList.remove("active"));
+menuBox.onclick=e=>e.stopPropagation();
+
+/* TOGGLES */
+document.getElementById("toggleSci").onclick=()=>{
+sciMode=!sciMode;
+document.getElementById("scientific").classList.toggle("hidden");
+document.getElementById("keypad").classList.toggle("hidden");
+};
+
+document.getElementById("toggleHistory").onclick=()=>{
+document.getElementById("history").classList.toggle("hidden");
+};
+
+document.getElementById("voiceToggle").onchange=e=>voiceOn=e.target.checked;
+
+/* THEMES */
+document.querySelectorAll("[data-theme]").forEach(btn=>{
+btn.onclick=()=>{
+document.body.className=btn.dataset.theme;
+};
+});
+
+/* KEYBOARD */
+document.addEventListener("keydown",e=>{
+if(e.repeat) return;
+
+if(/[0-9]/.test(e.key)) insert(e.key);
+else if("+-*/.^".includes(e.key)) insert(e.key);
+
+if(e.key==="Enter"){
+e.preventDefault();
+calc();
+}
+if(e.key==="Backspace"){
+e.preventDefault();
+expr=expr.slice(0,-1);
+update();
+}
+if(e.key==="Escape"){
+expr="";
+update();
+}
+});
+
+/* VOICE INPUT */
+let rec;
+
+if(window.SpeechRecognition||window.webkitSpeechRecognition){
+rec=new (window.SpeechRecognition||window.webkitSpeechRecognition)();
+
+rec.onresult=e=>{
+let t=e.results[0][0].transcript.toLowerCase();
+
+t=t.replace(/plus/g,"+")
+.replace(/minus/g,"-")
+.replace(/multiply|into/g,"*")
+.replace(/divide/g,"/")
+.replace(/power/g,"^")
+.replace(/pi/g,"π");
+
+insert(t);
+};
+}
+
+document.getElementById("voice").onclick=()=>{
+if(rec) rec.start();
+};
